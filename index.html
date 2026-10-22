@@ -16,9 +16,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closebrackets.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/matchbrackets.min.js"></script>
 
-    <!-- Skulpt (Python in the browser) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt-stdlib.js"></script>
+    <!-- Skulpt (Python in the browser) - Corrected CDN -->
+<script src="https://cdn.jsdelivr.net/gh/skulpt/skulpt-dist/skulpt.min.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/gh/skulpt/skulpt-dist/skulpt-stdlib.js" type="text/javascript"></script>
 
     <!-- Particles.js (Background Graphics) -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
@@ -628,14 +628,49 @@ except Exception as e:
         }
 
         function setupSkulpt() {
-            // Standard Skulpt initialization for Python 3
-            function builtinRead(x) {
-                if (Skulpt.mods["python3"]["builtin"][x]) return Skulpt.mods["python3"]["builtin"][x];
-                if (Skulpt.mods["python3"]["stdlib"][x]) return Skulpt.mods["python3"]["stdlib"][x];
-                throw "File not found: '" + x + "'";
-            }
-            Skulpt.configure({ read: builtinRead });
-        }
+    // Skulpt uses the global 'Sk' object, not 'Skulpt'
+    function builtinRead(x) {
+        if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
+            throw "File not found: '" + x + "'";
+        return Sk.builtinFiles["files"][x];
+    }
+    // Configure once globally
+    Sk.configure({ 
+        read: builtinRead, 
+        __future__: Sk.python3 // Use Python 3 syntax
+    });
+}
+
+function runPythonCode() {
+    const code = editor.getValue();
+    let outputText = "";
+    
+    clearConsole();
+    appendToConsole("> Executing main.py...\n");
+
+    function outf(text) {
+        outputText += text;
+        appendToConsole(text);
+    }
+
+    // Re-configure output for this specific run
+    Sk.configure({ output: outf, read: builtinRead });
+
+    try {
+        // Use asyncToPromise for proper execution flow
+        Sk.misceval.asyncToPromise(function() {
+            return Sk.importMainWithBody("<stdin>", false, code, true);
+        }).catch(function(err) {
+            appendToConsole(`\n[Error]: ${err.toString()}`);
+            outputText += `[Error]: ${err.toString()}`;
+        });
+    } catch (e) {
+        appendToConsole(`\n[Error]: ${e.toString()}`);
+        outputText += `[Error]: ${e.toString()}`;
+    }
+
+    return outputText;
+}
 
         // ============================================================================
         // 4. CORE LOGIC & RENDERING
