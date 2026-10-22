@@ -36,7 +36,8 @@
 
         h1, h2, h3 { font-weight: 800; }
         code { font-family: 'Fira Code', monospace; background: #1e293b; padding: 0.2rem 0.4rem; border-radius: 0.25rem; color: #38bdf8; }
-        pre { background: #1e293b; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        pre { background: #1e293b; padding: 10px; border-radius: 5px; overflow-x: auto; border: 1px solid #334155; }
+        pre code { background: transparent; padding: 0; color: #e2e8f0; }
 
         #particles-js {
             position: fixed;
@@ -53,8 +54,12 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
+        /* Fixed CodeMirror height issue */
         .CodeMirror {
             height: 100% !important;
+            width: 100% !important;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
             border-radius: 0.5rem;
             font-size: 15px;
             font-family: 'Fira Code', monospace;
@@ -214,7 +219,7 @@
 
     <script>
         // ============================================================================
-        // 1. CURRICULUM DATA (Fully Expanded based on the PDF)
+        // 1. CURRICULUM DATA (Fully Expanded and Fixed Syntax)
         // ============================================================================
         const curriculum = [
             {
@@ -430,7 +435,7 @@ else:
                     <p><strong>While:</strong> Executes as long as condition is True.</p>
                     <p><strong>For:</strong> Iterates through a sequence (list, tuple, string).</p>
                     <h3 class="text-lg font-bold text-white mt-4">2. Range Function</h3>
-                    <p><code>range(start, stop, step_size)</code>. Note: `stop` is exclusive.</p>
+                    <p><code>range(start, stop, step_size)</code>. Note: <code>stop</code> is exclusive.</p>
                     <h3 class="text-lg font-bold text-white mt-4">3. Loop Control Statements</h3>
                     <ul class="list-disc pl-5 mt-1 space-y-1">
                         <li><code>break</code>: Exit loop immediately.</li>
@@ -840,6 +845,9 @@ else:
                 submitBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span>${currentLang === 'en' ? 'Validate & Complete' : 'सत्यापित करें और पूरा करें'}</span>`;
                 submitBtn.className = "bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-2 rounded font-bold text-sm transition shadow-lg shadow-cyan-900/50 flex justify-center items-center gap-2 mt-2 shrink-0";
             }
+
+            // Refresh editor to fix any layout glitches when switching chapters
+            setTimeout(() => editor.refresh(), 10);
 
             renderSidebar();
         }
