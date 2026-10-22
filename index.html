@@ -52,8 +52,9 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
+        /* CodeMirror takes 100% of its flex container */
         .CodeMirror {
-            height: calc(100vh - 280px);
+            height: 100% !important;
             border-radius: 0.5rem;
             font-size: 15px;
             font-family: 'Fira Code', monospace;
@@ -67,8 +68,6 @@
             font-family: 'Fira Code', monospace;
             background: #000000;
             color: #4ade80;
-            min-height: 100px;
-            max-height: 150px;
             padding: 10px;
             border-radius: 0.5rem;
             overflow-y: auto;
@@ -76,7 +75,23 @@
             white-space: pre-wrap;
         }
 
-        ::-webkit-scrollbar { width: 8px; }
+        /* Maximized Console State */
+        .console-maximized {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            z-index: 9999;
+            height: 100vh !important;
+            border-radius: 0 !important;
+            background: #0f172a !important;
+            display: flex;
+            flex-direction: column;
+            padding: 20px !important;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
@@ -121,7 +136,7 @@
         <!-- Sidebar -->
         <aside id="sidebar" class="w-72 glass-panel h-full p-4 overflow-y-auto z-10 flex flex-col border-r border-slate-700 transition-all duration-300 shrink-0">
             <nav id="sidebar-nav" class="flex-grow space-y-2 text-sm"></nav>
-            <div class="mt-4 pt-4 border-t border-slate-700">
+            <div class="mt-4 pt-4 border-t border-slate-700 shrink-0">
                 <div class="flex justify-between items-center mb-2">
                     <span id="progress-label" class="text-xs text-slate-400 uppercase tracking-wider font-bold">Your Progress</span>
                     <span id="progress-text" class="text-xs font-bold text-cyan-400">0%</span>
@@ -134,20 +149,22 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-grow h-full p-4 overflow-y-auto z-10 flex flex-col transition-all duration-300">
+        <main class="flex-grow h-full p-4 overflow-hidden z-10 flex flex-col transition-all duration-300">
             <header class="mb-4 flex justify-between items-end border-b border-slate-700 pb-2 shrink-0">
                 <div>
                     <h2 id="lesson-title" class="text-2xl font-bold text-white mb-1">Loading...</h2>
                     <p id="lesson-description" class="text-slate-400 text-xs">Please wait while the environment initializes.</p>
                 </div>
-                <span id="chapter-badge" class="bg-slate-800 text-cyan-400 text-xs px-3 py-1 rounded-full border border-cyan-900 font-bold">CH 0</span>
+                <span id="chapter-badge" class="bg-slate-800 text-cyan-400 text-xs px-3 py-1 rounded-full border border-cyan-900 font-bold shrink-0 ml-4">CH 0</span>
             </header>
 
-            <div class="flex flex-col xl:flex-row gap-4 flex-grow overflow-hidden">
+            <!-- Content Split -->
+            <div class="flex flex-col xl:flex-row gap-4 flex-grow overflow-hidden h-full">
+                
                 <!-- Theory Panel -->
                 <div id="theory-panel" class="w-full xl:w-5/12 glass-panel p-4 rounded-xl overflow-y-auto flex flex-col fade-in transition-all duration-300 shrink-0">
                     <div id="theory-content" class="prose prose-invert max-w-none text-slate-300 text-sm leading-relaxed mb-4"></div>
-                    <div class="mt-auto bg-slate-800 p-3 rounded-lg border border-slate-600">
+                    <div class="mt-auto bg-slate-800 p-3 rounded-lg border border-slate-600 shrink-0">
                         <div class="flex items-center gap-2 mb-1">
                             <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             <h3 id="task-label" class="text-sm font-bold text-yellow-400">Current Task</h3>
@@ -160,9 +177,11 @@
                     </div>
                 </div>
 
-                <!-- Editor & Console -->
-                <div class="w-full flex-grow flex flex-col gap-4 overflow-hidden">
-                    <div class="glass-panel p-3 rounded-xl flex-grow flex flex-col">
+                <!-- Editor & Console Wrapper -->
+                <div class="w-full flex-grow flex flex-col gap-4 overflow-hidden h-full">
+                    
+                    <!-- Editor Container -->
+                    <div class="glass-panel p-3 rounded-xl flex-grow flex flex-col overflow-hidden relative">
                         <div class="flex justify-between items-center mb-2 shrink-0">
                             <div class="flex gap-1.5 items-center">
                                 <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
@@ -175,16 +194,23 @@
                                 Run Code
                             </button>
                         </div>
-                        <textarea id="code-editor"></textarea>
+                        <!-- The actual editor fills the rest of this container -->
+                        <div class="flex-grow overflow-hidden relative">
+                            <textarea id="code-editor"></textarea>
+                        </div>
                     </div>
 
-                    <div class="glass-panel p-3 rounded-xl h-48 flex flex-col shrink-0">
-                        <div class="flex justify-between items-center mb-1">
+                    <!-- Console Container (Fixed Height, Visible by default) -->
+                    <div id="console-panel" class="glass-panel p-3 rounded-xl h-56 flex flex-col shrink-0 transition-all duration-300">
+                        <div class="flex justify-between items-center mb-1 shrink-0">
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider" data-en="Terminal Output" data-hi="टर्मिनल आउटपुट">Terminal Output</span>
-                            <button id="clear-console" class="text-[10px] text-slate-500 hover:text-slate-300" data-en="Clear" data-hi="साफ़ करें">Clear</button>
+                            <div class="flex gap-3">
+                                <button id="maximize-console-btn" class="text-[10px] text-cyan-400 hover:text-cyan-300 font-bold transition-colors" data-en="Maximize" data-hi="बड़ा करें">Maximize</button>
+                                <button id="clear-console" class="text-[10px] text-slate-500 hover:text-slate-300 transition-colors" data-en="Clear" data-hi="साफ़ करें">Clear</button>
+                            </div>
                         </div>
-                        <div id="console" class="console-output flex-grow text-xs">> Initializing Pyodide... Please wait.</div>
-                        <button id="submit-btn" class="mt-2 bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1.5 rounded font-bold text-sm transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-cyan-900/50 flex justify-center items-center gap-2" disabled>
+                        <div id="console" class="console-output flex-grow text-xs mb-2 overflow-y-auto">> Initializing Pyodide... Please wait.</div>
+                        <button id="submit-btn" class="bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-2 rounded font-bold text-sm transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-cyan-900/50 flex justify-center items-center gap-2 shrink-0" disabled>
                             <span data-en="Loading Python Environment..." data-hi="पायथन वातावरण लोड हो रहा है...">Loading Python Environment...</span>
                         </button>
                     </div>
@@ -195,7 +221,7 @@
 
     <script>
         // ============================================================================
-        // 1. CURRICULUM DATA (With Hindi Translations)
+        // 1. CURRICULUM DATA
         // ============================================================================
         const curriculum = [
             {
@@ -331,7 +357,6 @@
                 expectedOutput: "[1, 2, 7, 8]",
                 starterCode: "l1 = [1, 8, 7, 2]\n# Sort and print\nl1.sort()\nprint(l1)"
             },
-            // Adding a few more to show the pattern, you can translate the rest similarly
             {
                 id: "ch5",
                 title: "Ch 5: Dictionary & Sets",
@@ -345,15 +370,11 @@
                 expectedOutput: "4",
                 starterCode: "s = {1, 2, 3}\n# Add 4 and print length\ns.add(4)\nprint(len(s))"
             },
-            // I'll fill the rest with placeholders for brevity in this response, but you get the idea!
             { id: "ch6", title: "Ch 6: Conditionals", title_hi: "अध्याय 6: शर्तें", description: "If/Else", description_hi: "If/Else", theory: "If-Else", theory_hi: "If-Else", task: "Check age.", task_hi: "उम्र जांचें।", expectedOutput: "Adult", starterCode: "age = 22\nif age >= 18:\n    print('Adult')" },
             { id: "ch7", title: "Ch 7: Loops", title_hi: "अध्याय 7: लूप्स", description: "For & While", description_hi: "For और While", theory: "Loops", theory_hi: "लूप्स", task: "Print 1 to 5.", task_hi: "1 से 5 प्रिंट करें।", expectedOutput: "1\n2\n3\n4\n5", starterCode: "for i in range(1, 6):\n    print(i)" },
             { id: "ch8", title: "Ch 8: Functions", title_hi: "अध्याय 8: फ़ंक्शंस", description: "Reusable code", description_hi: "पुन: प्रयोज्य कोड", theory: "Functions", theory_hi: "फ़ंक्शंस", task: "Avg function.", task_hi: "औसत फ़ंक्शन।", expectedOutput: "15.0", starterCode: "def avg(a, b):\n    return (a + b) / 2\nprint(avg(10, 20))" },
             { id: "ch9", title: "Ch 9: File I/O", title_hi: "अध्याय 9: फ़ाइल I/O", description: "Files", description_hi: "फ़ाइलें", theory: "Files", theory_hi: "फ़ाइलें", task: "Simulate read.", task_hi: "पढ़ने का अनुकरण करें।", expectedOutput: "File Read Successful", starterCode: "print('File Read Successful')" },
             { id: "ch10", title: "Ch 10: OOP", title_hi: "अध्याय 10: OOP", description: "Classes", description_hi: "कक्षाएं", theory: "Classes", theory_hi: "कक्षाएं", task: "Calculator class.", task_hi: "कैलकुलेटर क्लास।", expectedOutput: "25", starterCode: "class Calculator:\n    def square(self, n):\n        return n * n\ncalc = Calculator()\nprint(calc.square(5))" },
-            { id: "ch11", title: "Ch 11: Inheritance", title_hi: "अध्याय 11: विरासत", description: "OOP", description_hi: "OOP", theory: "Inheritance", theory_hi: "विरासत", task: "Dog class.", task_hi: "डॉग क्लास।", expectedOutput: "Bark", starterCode: "class Dog:\n    def sound(self):\n        print('Bark')\nd = Dog()\nd.sound()" },
-            { id: "ch12", title: "Ch 12: Advanced 1", title_hi: "अध्याय 12: उन्नत 1", description: "Try/Except", description_hi: "Try/Except", theory: "Try/Except", theory_hi: "Try/Except", task: "Catch error.", task_hi: "त्रुटि पकड़ें।", expectedOutput: "Error caught", starterCode: "try:\n    print(10 / 0)\nexcept:\n    print('Error caught')" },
-            { id: "ch13", title: "Ch 13: Advanced 2", title_hi: "अध्याय 13: उन्नत 2", description: "Lambda", description_hi: "लैम्ब्डा", theory: "Lambda", theory_hi: "लैम्ब्डा", task: "Double list.", task_hi: "सूची दोगुनी करें।", expectedOutput: "[2, 4, 6]", starterCode: "nums = [1, 2, 3]\nprint(list(map(lambda x: x*2, nums)))" },
         ];
 
         // ============================================================================
@@ -365,10 +386,10 @@
         let completedChapters = JSON.parse(localStorage.getItem('pythonUltimateProgress')) || [];
         let isPyodideReady = false;
         
-        // New States
-        let currentLang = 'en'; // 'en' or 'hi'
+        let currentLang = 'en';
         let isSidebarOpen = true;
         let isTheoryOpen = true;
+        let isConsoleMaximized = false;
 
         document.addEventListener("DOMContentLoaded", async () => {
             initParticles();
@@ -384,34 +405,28 @@
             const submitBtn = document.getElementById("submit-btn");
             const runBtn = document.getElementById("run-btn");
 
-            consoleDiv.innerHTML = "> Loading Pyodide (Python runtime)...\n> This may take a few seconds on first load.";
+            consoleDiv.innerHTML = "> Loading Pyodide...";
 
             try {
-                pyodide = await loadPyodide({
-                    indexURL: "https://cdn.jsdelivr.net/pyodide/v0.27.4/full/"
-                });
-
+                pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.27.4/full/" });
                 pyodide.setStdout({ batched: (str) => { appendToConsole(str); window._pyOutput = (window._pyOutput || "") + str; } });
                 pyodide.setStderr({ batched: (str) => { appendToConsole(str); window._pyOutput = (window._pyOutput || "") + str; } });
                 pyodide.setStdin({ stdin: () => prompt("Python input():") });
 
                 isPyodideReady = true;
-                consoleDiv.innerHTML = "> Python environment ready!";
+                consoleDiv.innerHTML = "> Ready!";
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span id="submit-text">Validate & Complete</span>`;
-                runBtn.disabled = false;
-
+                submitBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span>${currentLang === 'en' ? 'Validate & Complete' : 'सत्यापित करें'}</span>`;
             } catch (error) {
-                consoleDiv.innerHTML = `> Error loading Pyodide: ${error.message}`;
-                submitBtn.innerHTML = "Pyodide Load Failed";
+                consoleDiv.innerHTML = `> Error: ${error.message}`;
+                submitBtn.innerHTML = "Load Failed";
             }
         }
 
         // ============================================================================
-        // 3. UI & TOGGLES LOGIC
+        // 3. UI LOGIC
         // ============================================================================
         function setupUIListeners() {
-            // Language Toggle
             document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
             document.getElementById('lang-hi').addEventListener('click', () => setLanguage('hi'));
 
@@ -419,11 +434,8 @@
             document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
                 isSidebarOpen = !isSidebarOpen;
                 const sidebar = document.getElementById('sidebar');
-                if (isSidebarOpen) {
-                    sidebar.classList.remove('-ml-72', 'opacity-0');
-                } else {
-                    sidebar.classList.add('-ml-72', 'opacity-0');
-                }
+                sidebar.classList.toggle('-ml-72', !isSidebarOpen);
+                sidebar.classList.toggle('opacity-0', !isSidebarOpen);
             });
 
             // Theory Toggle
@@ -431,39 +443,46 @@
                 isTheoryOpen = !isTheoryOpen;
                 const theoryPanel = document.getElementById('theory-panel');
                 const btnText = document.getElementById('theory-btn-text');
-                if (isTheoryOpen) {
-                    theoryPanel.classList.remove('hidden');
-                    btnText.innerText = currentLang === 'en' ? 'Hide Theory' : 'थ्योरी छिपाएं';
+                theoryPanel.classList.toggle('hidden', !isTheoryOpen);
+                btnText.innerText = isTheoryOpen ? (currentLang === 'en' ? 'Hide Theory' : 'थ्योरी छिपाएं') : (currentLang === 'en' ? 'Show Theory' : 'थ्योरी दिखाएं');
+            });
+
+            // Maximize Console
+            document.getElementById('maximize-console-btn').addEventListener('click', () => {
+                isConsoleMaximized = !isConsoleMaximized;
+                const panel = document.getElementById('console-panel');
+                const btn = document.getElementById('maximize-console-btn');
+                
+                if (isConsoleMaximized) {
+                    panel.classList.add('console-maximized');
+                    btn.innerText = currentLang === 'en' ? 'Minimize' : 'छोटा करें';
                 } else {
-                    theoryPanel.classList.add('hidden');
-                    btnText.innerText = currentLang === 'en' ? 'Show Theory' : 'थ्योरी दिखाएं';
+                    panel.classList.remove('console-maximized');
+                    btn.innerText = currentLang === 'en' ? 'Maximize' : 'बड़ा करें';
                 }
+                // CodeMirror needs to refresh when its container resizes
+                editor.refresh();
             });
         }
 
         function setLanguage(lang) {
             currentLang = lang;
-            
-            // Update Toggle Buttons UI
-            const enBtn = document.getElementById('lang-en');
-            const hiBtn = document.getElementById('lang-hi');
-            
-            if (lang === 'en') {
-                enBtn.className = "px-3 py-1 text-xs font-bold rounded bg-cyan-600 text-white transition-all";
-                hiBtn.className = "px-3 py-1 text-xs font-bold rounded text-slate-400 hover:text-white transition-all";
-            } else {
-                hiBtn.className = "px-3 py-1 text-xs font-bold rounded bg-cyan-600 text-white transition-all";
-                enBtn.className = "px-3 py-1 text-xs font-bold rounded text-slate-400 hover:text-white transition-all";
-            }
+            document.getElementById('lang-en').className = lang === 'en' ? "px-3 py-1 text-xs font-bold rounded bg-cyan-600 text-white" : "px-3 py-1 text-xs font-bold rounded text-slate-400 hover:text-white";
+            document.getElementById('lang-hi').className = lang === 'hi' ? "px-3 py-1 text-xs font-bold rounded bg-cyan-600 text-white" : "px-3 py-1 text-xs font-bold rounded text-slate-400 hover:text-white";
 
-            // Update Static UI Elements
             document.querySelectorAll('[data-en]').forEach(el => {
                 el.innerText = el.getAttribute(`data-${lang}`);
             });
 
-            // Refresh Dynamic Content
+            // Fix maximize button text on language switch
+            if (isConsoleMaximized) {
+                document.getElementById('maximize-console-btn').innerText = lang === 'en' ? 'Minimize' : 'छोटा करें';
+            } else {
+                document.getElementById('maximize-console-btn').innerText = lang === 'en' ? 'Maximize' : 'बड़ा करें';
+            }
+
             renderSidebar();
-            loadChapter(currentChapterIndex, false); // false prevents resetting the editor code if user just switches language
+            loadChapter(currentChapterIndex, false);
         }
 
         // ============================================================================
@@ -503,16 +522,11 @@
             currentChapterIndex = index;
             const chapter = curriculum[index];
             
-            const title = currentLang === 'hi' ? chapter.title_hi : chapter.title;
-            const desc = currentLang === 'hi' ? chapter.description_hi : chapter.description;
-            const theory = currentLang === 'hi' ? chapter.theory_hi : chapter.theory;
-            const task = currentLang === 'hi' ? chapter.task_hi : chapter.task;
-
-            document.getElementById("lesson-title").innerText = title;
-            document.getElementById("lesson-description").innerText = desc;
+            document.getElementById("lesson-title").innerText = currentLang === 'hi' ? chapter.title_hi : chapter.title;
+            document.getElementById("lesson-description").innerText = currentLang === 'hi' ? chapter.description_hi : chapter.description;
             document.getElementById("chapter-badge").innerText = `CH ${index}`;
-            document.getElementById("theory-content").innerHTML = theory;
-            document.getElementById("task-description").innerText = task;
+            document.getElementById("theory-content").innerHTML = currentLang === 'hi' ? chapter.theory_hi : chapter.theory;
+            document.getElementById("task-description").innerText = currentLang === 'hi' ? chapter.task_hi : chapter.task;
             document.getElementById("expected-output-display").innerText = chapter.expectedOutput.replace(/\n/g, '\\n');
 
             if (resetCode) {
@@ -525,16 +539,11 @@
             const submitBtn = document.getElementById("submit-btn");
             if (completedChapters.includes(chapter.id)) {
                 submitBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> <span>${currentLang === 'en' ? 'Completed' : 'पूरा हुआ'}</span>`;
-                submitBtn.className = "mt-2 bg-green-700 text-white px-3 py-1.5 rounded font-bold text-sm shadow-lg flex justify-center items-center gap-2 cursor-default";
+                submitBtn.className = "bg-green-700 text-white px-3 py-2 rounded font-bold text-sm shadow-lg flex justify-center items-center gap-2 cursor-default mt-2 shrink-0";
             } else {
                 submitBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span>${currentLang === 'en' ? 'Validate & Complete' : 'सत्यापित करें और पूरा करें'}</span>`;
-                submitBtn.className = "mt-2 bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1.5 rounded font-bold text-sm transition shadow-lg shadow-cyan-900/50 flex justify-center items-center gap-2";
+                submitBtn.className = "bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-2 rounded font-bold text-sm transition shadow-lg shadow-cyan-900/50 flex justify-center items-center gap-2 mt-2 shrink-0";
             }
-
-            const theoryPanel = document.getElementById('theory-panel');
-            theoryPanel.classList.remove('fade-in');
-            void theoryPanel.offsetWidth;
-            theoryPanel.classList.add('fade-in');
 
             renderSidebar();
         }
@@ -569,7 +578,7 @@
         }
 
         // ============================================================================
-        // 6. INITIALIZATION HELPERS
+        // 6. HELPERS & LISTENERS
         // ============================================================================
         function initParticles() {
             particlesJS("particles-js", {
@@ -585,7 +594,6 @@
             });
         }
 
-        // Event Listeners for Buttons
         document.getElementById("run-btn").addEventListener("click", async () => {
             if (isPyodideReady) await runPythonCode();
         });
@@ -612,8 +620,6 @@
                         alert(currentLang === 'en' ? "🎉 Correct! Moving to next chapter." : "🎉 सही! अगले अध्याय पर जा रहे हैं।");
                         loadChapter(currentChapterIndex + 1);
                     }, 500);
-                } else {
-                    setTimeout(() => alert(currentLang === 'en' ? "🏆 CONGRATULATIONS!" : "🏆 बधाई हो!"), 500);
                 }
             } else {
                 appendToConsole("\n\n❌ ERROR: Output mismatch.");
