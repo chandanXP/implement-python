@@ -17,8 +17,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/matchbrackets.min.js"></script>
 
     <!-- Skulpt (Python in the browser) - Corrected CDN -->
-<script src="https://cdn.jsdelivr.net/gh/skulpt/skulpt-dist/skulpt.min.js" type="text/javascript"></script>
-<script src="https://cdn.jsdelivr.net/gh/skulpt/skulpt-dist/skulpt-stdlib.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/gh/skulpt/skulpt-dist/skulpt.min.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/gh/skulpt/skulpt-dist/skulpt-stdlib.js" type="text/javascript"></script>
 
     <!-- Particles.js (Background Graphics) -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
@@ -191,7 +191,7 @@
     <!-- Application Logic Script -->
     <script>
         // ============================================================================
-        // 1. CURRICULUM DATA (Based on "The Ultimate Python Handbook" PDF)
+        // 1. CURRICULUM DATA
         // ============================================================================
         
         const curriculum = [
@@ -247,7 +247,7 @@
                     <h3 class="text-xl font-bold text-white mt-6">Type Casting & Input</h3>
                     <p><code>type()</code> checks the data type. <code>int()</code>, <code>float()</code>, <code>str()</code> convert types. <code>input()</code> takes input from the keyboard as a string.</p>
                 `,
-                task: "Write a program to take two numbers as input from the user, add them together, and print the result.",
+                task: "Write a program to take two numbers as input from the user, add them together, and print the result. (Note: The browser will prompt you for input).",
                 expectedOutput: "30",
                 starterCode: "a = 10\nb = 20\n# Add them and print\nprint(a + b)"
             },
@@ -580,15 +580,14 @@ except Exception as e:
 
         let currentChapterIndex = 0;
         let editor;
-        // Load progress from localStorage, default to empty array
         let completedChapters = JSON.parse(localStorage.getItem('pythonUltimateProgress')) || [];
 
         document.addEventListener("DOMContentLoaded", () => {
             initParticles();
             initEditor();
+            setupSkulpt();
             renderSidebar();
             loadChapter(0);
-            setupSkulpt();
         });
 
         // ============================================================================
@@ -628,49 +627,22 @@ except Exception as e:
         }
 
         function setupSkulpt() {
-    // Skulpt uses the global 'Sk' object, not 'Skulpt'
-    function builtinRead(x) {
-        if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
-            throw "File not found: '" + x + "'";
-        return Sk.builtinFiles["files"][x];
-    }
-    // Configure once globally
-    Sk.configure({ 
-        read: builtinRead, 
-        __future__: Sk.python3 // Use Python 3 syntax
-    });
-}
-
-function runPythonCode() {
-    const code = editor.getValue();
-    let outputText = "";
-    
-    clearConsole();
-    appendToConsole("> Executing main.py...\n");
-
-    function outf(text) {
-        outputText += text;
-        appendToConsole(text);
-    }
-
-    // Re-configure output for this specific run
-    Sk.configure({ output: outf, read: builtinRead });
-
-    try {
-        // Use asyncToPromise for proper execution flow
-        Sk.misceval.asyncToPromise(function() {
-            return Sk.importMainWithBody("<stdin>", false, code, true);
-        }).catch(function(err) {
-            appendToConsole(`\n[Error]: ${err.toString()}`);
-            outputText += `[Error]: ${err.toString()}`;
-        });
-    } catch (e) {
-        appendToConsole(`\n[Error]: ${e.toString()}`);
-        outputText += `[Error]: ${e.toString()}`;
-    }
-
-    return outputText;
-}
+            function builtinRead(x) {
+                if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
+                    throw "File not found: '" + x + "'";
+                return Sk.builtinFiles["files"][x];
+            }
+            
+            Sk.configure({ 
+                read: builtinRead,
+                __future__: Sk.python3,
+                // Enable input() support via browser prompt
+                inputfun: function (prompt) {
+                    return window.prompt(prompt);
+                },
+                inputfunTakesPrompt: true
+            });
+        }
 
         // ============================================================================
         // 4. CORE LOGIC & RENDERING
@@ -682,7 +654,6 @@ function runPythonCode() {
             
             curriculum.forEach((chapter, index) => {
                 const isCompleted = completedChapters.includes(chapter.id);
-                // Chapter 0 is always unlocked. Others unlock if previous is completed.
                 const isUnlocked = index === 0 || completedChapters.includes(curriculum[index - 1].id);
                 
                 const btn = document.createElement("button");
@@ -701,7 +672,6 @@ function runPythonCode() {
                 nav.appendChild(btn);
             });
 
-            // Update Progress Bar
             const percent = Math.round((completedChapters.length / curriculum.length) * 100);
             document.getElementById("progress-text").innerText = percent + "%";
             document.getElementById("progress-bar").style.width = percent + "%";
@@ -711,38 +681,31 @@ function runPythonCode() {
             currentChapterIndex = index;
             const chapter = curriculum[index];
             
-            // Update UI Text
             document.getElementById("lesson-title").innerText = chapter.title;
             document.getElementById("lesson-description").innerText = chapter.description;
             document.getElementById("chapter-badge").innerText = `CH ${index}`;
             document.getElementById("theory-content").innerHTML = chapter.theory;
             document.getElementById("task-description").innerText = chapter.task;
             
-            // Handle expected output display safely
-            const expectedStr = chapter.expectedOutput.replace(/\n/g, '\\n');
-            document.getElementById("expected-output-display").innerText = expectedStr;
+            document.getElementById("expected-output-display").innerText = chapter.expectedOutput.replace(/\n/g, '\\n');
 
-            // Setup Editor
             editor.setValue(chapter.starterCode);
             
-            // Reset Console
             clearConsole();
             appendToConsole("> Environment loaded. Ready to run.");
             
-            // Reset Submit Button
             const submitBtn = document.getElementById("submit-btn");
             submitBtn.disabled = false;
+            
+            // Reset button styling
             if (completedChapters.includes(chapter.id)) {
                 submitBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Already Completed`;
-                submitBtn.classList.replace('bg-cyan-600', 'bg-green-700');
-                submitBtn.classList.replace('hover:bg-cyan-500', 'hover:bg-green-600');
+                submitBtn.className = "mt-4 bg-green-700 text-white px-4 py-2.5 rounded-lg font-bold shadow-lg flex justify-center items-center gap-2 cursor-default";
             } else {
                 submitBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Validate & Complete Chapter`;
-                submitBtn.classList.replace('bg-green-700', 'bg-cyan-600');
-                submitBtn.classList.replace('hover:bg-green-600', 'hover:bg-cyan-500');
+                submitBtn.className = "mt-4 bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2.5 rounded-lg font-bold transition shadow-lg shadow-cyan-900/50 flex justify-center items-center gap-2";
             }
 
-            // Add fade-in animation
             const theoryPanel = document.getElementById('theory-panel');
             theoryPanel.classList.remove('fade-in');
             void theoryPanel.offsetWidth; // trigger reflow
@@ -755,37 +718,6 @@ function runPythonCode() {
         // 5. PYTHON EXECUTION (SKULPT)
         // ============================================================================
 
-        function runPythonCode() {
-            const code = editor.getValue();
-            let outputText = "";
-            
-            clearConsole();
-            appendToConsole("> Executing main.py...\n");
-
-            function outf(text) {
-                outputText += text;
-                appendToConsole(text);
-            }
-
-            function builtinRead(x) {
-                if (Skulpt.mods["python3"]["builtin"][x]) return Skulpt.mods["python3"]["builtin"][x];
-                if (Skulpt.mods["python3"]["stdlib"][x]) return Skulpt.mods["python3"]["stdlib"][x];
-                throw "File not found: '" + x + "'";
-            }
-
-            Skulpt.configure({ output: outf, read: builtinRead });
-            
-            try {
-                // Run the python code
-                Skulpt.importMainWithBody("<stdin>", false, code);
-            } catch (e) {
-                appendToConsole(`\n[Error]: ${e.toString()}`);
-                outputText += `[Error]: ${e.toString()}`;
-            }
-
-            return outputText;
-        }
-
         function appendToConsole(text) {
             const consoleDiv = document.getElementById("console");
             consoleDiv.innerHTML += text.replace(/\n/g, "<br>");
@@ -796,33 +728,64 @@ function runPythonCode() {
             document.getElementById("console").innerHTML = "";
         }
 
+        // Promise-based execution to ensure output is fully captured
+        function runPythonCode() {
+            return new Promise((resolve, reject) => {
+                const code = editor.getValue();
+                let outputText = "";
+                
+                clearConsole();
+                appendToConsole("> Executing main.py...\n");
+
+                function outf(text) {
+                    outputText += text;
+                    appendToConsole(text);
+                }
+
+                Sk.configure({ output: outf });
+
+                try {
+                    Sk.misceval.asyncToPromise(function() {
+                        return Sk.importMainWithBody("<stdin>", false, code, true);
+                    }).then(() => {
+                        resolve(outputText);
+                    }).catch((err) => {
+                        appendToConsole(`\n[Error]: ${err.toString()}`);
+                        outputText += `[Error]: ${err.toString()}`;
+                        resolve(outputText); // Resolve so validation can process the error text
+                    });
+                } catch (e) {
+                    appendToConsole(`\n[Error]: ${e.toString()}`);
+                    outputText += `[Error]: ${e.toString()}`;
+                    resolve(outputText);
+                }
+            });
+        }
+
         // ============================================================================
         // 6. EVENT LISTENERS
         // ============================================================================
 
-        // Run Button
         document.getElementById("run-btn").addEventListener("click", () => {
             runPythonCode();
         });
 
-        // Clear Console Button
         document.getElementById("clear-console").addEventListener("click", () => {
             clearConsole();
         });
 
-        // Submit Button (Validation)
-        document.getElementById("submit-btn").addEventListener("click", () => {
+        document.getElementById("submit-btn").addEventListener("click", async () => {
             const chapter = curriculum[currentChapterIndex];
-            const output = runPythonCode();
             
-            // Clean the output by trimming spaces and standardizing newlines for comparison
+            // Wait for Python code to complete
+            const output = await runPythonCode();
+            
             const cleanOutput = output.trim().replace(/\r\n/g, '\n');
             const expected = chapter.expectedOutput.trim().replace(/\r\n/g, '\n');
 
             if (cleanOutput === expected) {
                 appendToConsole("\n\n✅ SUCCESS! Output matches expected result.");
                 
-                // Save progress
                 if (!completedChapters.includes(chapter.id)) {
                     completedChapters.push(chapter.id);
                     localStorage.setItem('pythonUltimateProgress', JSON.stringify(completedChapters));
@@ -830,16 +793,15 @@ function runPythonCode() {
                 
                 renderSidebar();
                 
-                // Unlock next chapter
                 if (currentChapterIndex + 1 < curriculum.length) {
                     setTimeout(() => {
                         alert("🎉 Correct! Chapter completed. Moving to next chapter.");
                         loadChapter(currentChapterIndex + 1);
-                    }, 1000);
+                    }, 500);
                 } else {
                     setTimeout(() => {
                         alert("🏆 CONGRATULATIONS! You have completed the entire Ultimate Python Handbook!");
-                    }, 1000);
+                    }, 500);
                 }
 
             } else {
@@ -849,7 +811,6 @@ function runPythonCode() {
             }
         });
 
-        // Reset Progress Button
         document.getElementById("reset-btn").addEventListener("click", () => {
             if (confirm("Are you sure you want to reset all your progress? This cannot be undone.")) {
                 completedChapters = [];
