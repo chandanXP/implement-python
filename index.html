@@ -36,6 +36,7 @@
 
         h1, h2, h3 { font-weight: 800; }
         code { font-family: 'Fira Code', monospace; background: #1e293b; padding: 0.2rem 0.4rem; border-radius: 0.25rem; color: #38bdf8; }
+        pre { background: #1e293b; padding: 10px; border-radius: 5px; overflow-x: auto; }
 
         #particles-js {
             position: fixed;
@@ -52,7 +53,6 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
-        /* CodeMirror takes 100% of its flex container */
         .CodeMirror {
             height: 100% !important;
             border-radius: 0.5rem;
@@ -75,7 +75,6 @@
             white-space: pre-wrap;
         }
 
-        /* Maximized Console State */
         .console-maximized {
             position: fixed !important;
             top: 0 !important;
@@ -107,7 +106,6 @@
     <!-- Top Navigation Bar -->
     <nav class="h-14 glass-panel z-20 flex items-center justify-between px-4 border-b border-slate-700 shrink-0">
         <div class="flex items-center gap-4">
-            <!-- Sidebar Toggle -->
             <button id="toggle-sidebar-btn" class="text-slate-300 hover:text-white transition-colors p-2 rounded hover:bg-slate-700">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
@@ -118,13 +116,11 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <!-- Theory Toggle -->
             <button id="toggle-theory-btn" class="text-xs font-bold bg-slate-800 hover:bg-slate-700 text-cyan-400 px-3 py-1.5 rounded border border-slate-600 transition flex items-center gap-1">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 <span id="theory-btn-text">Hide Theory</span>
             </button>
 
-            <!-- Language Toggle -->
             <div class="flex bg-slate-800 rounded p-1 border border-slate-600">
                 <button id="lang-en" class="px-3 py-1 text-xs font-bold rounded bg-cyan-600 text-white transition-all">EN</button>
                 <button id="lang-hi" class="px-3 py-1 text-xs font-bold rounded text-slate-400 hover:text-white transition-all">हिंदी</button>
@@ -135,7 +131,7 @@
     <div class="flex flex-grow overflow-hidden">
         <!-- Sidebar -->
         <aside id="sidebar" class="w-72 glass-panel h-full p-4 overflow-y-auto z-10 flex flex-col border-r border-slate-700 transition-all duration-300 shrink-0">
-            <nav id="sidebar-nav" class="flex-grow space-y-2 text-sm"></nav>
+            <nav id="sidebar-nav" class="flex-grow space-y-1 text-sm"></nav>
             <div class="mt-4 pt-4 border-t border-slate-700 shrink-0">
                 <div class="flex justify-between items-center mb-2">
                     <span id="progress-label" class="text-xs text-slate-400 uppercase tracking-wider font-bold">Your Progress</span>
@@ -158,12 +154,12 @@
                 <span id="chapter-badge" class="bg-slate-800 text-cyan-400 text-xs px-3 py-1 rounded-full border border-cyan-900 font-bold shrink-0 ml-4">CH 0</span>
             </header>
 
-            <!-- Content Split -->
             <div class="flex flex-col xl:flex-row gap-4 flex-grow overflow-hidden h-full">
                 
                 <!-- Theory Panel -->
                 <div id="theory-panel" class="w-full xl:w-5/12 glass-panel p-4 rounded-xl overflow-y-auto flex flex-col fade-in transition-all duration-300 shrink-0">
                     <div id="theory-content" class="prose prose-invert max-w-none text-slate-300 text-sm leading-relaxed mb-4"></div>
+                    
                     <div class="mt-auto bg-slate-800 p-3 rounded-lg border border-slate-600 shrink-0">
                         <div class="flex items-center gap-2 mb-1">
                             <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
@@ -180,7 +176,6 @@
                 <!-- Editor & Console Wrapper -->
                 <div class="w-full flex-grow flex flex-col gap-4 overflow-hidden h-full">
                     
-                    <!-- Editor Container -->
                     <div class="glass-panel p-3 rounded-xl flex-grow flex flex-col overflow-hidden relative">
                         <div class="flex justify-between items-center mb-2 shrink-0">
                             <div class="flex gap-1.5 items-center">
@@ -194,13 +189,11 @@
                                 Run Code
                             </button>
                         </div>
-                        <!-- The actual editor fills the rest of this container -->
                         <div class="flex-grow overflow-hidden relative">
                             <textarea id="code-editor"></textarea>
                         </div>
                     </div>
 
-                    <!-- Console Container (Fixed Height, Visible by default) -->
                     <div id="console-panel" class="glass-panel p-3 rounded-xl h-56 flex flex-col shrink-0 transition-all duration-300">
                         <div class="flex justify-between items-center mb-1 shrink-0">
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider" data-en="Terminal Output" data-hi="टर्मिनल आउटपुट">Terminal Output</span>
@@ -221,7 +214,7 @@
 
     <script>
         // ============================================================================
-        // 1. CURRICULUM DATA
+        // 1. CURRICULUM DATA (Fully Expanded based on the PDF)
         // ============================================================================
         const curriculum = [
             {
@@ -231,37 +224,44 @@
                 description: "Learn the basics of Python, how to write comments, and use modules.",
                 description_hi: "पायथन की मूल बातें सीखें, टिप्पणियाँ कैसे लिखें और मॉड्यूल का उपयोग कैसे करें।",
                 theory: `
-                    <h3 class="text-lg font-bold text-white mt-2">What is Programming?</h3>
-                    <p>Just like we use Hindi or English to communicate with each other, we use a programming language like Python to communicate with the computer. Programming is a way to instruct the computer to perform various tasks.</p>
-                    <h3 class="text-lg font-bold text-white mt-4">What is Python?</h3>
-                    <p>Python is a simple and easy-to-understand language which feels like reading simple English. This pseudo-code nature is easy to learn and understandable by beginners.</p>
-                    <h3 class="text-lg font-bold text-white mt-4">Modules & pip</h3>
-                    <p>A <strong>module</strong> is a file containing code written by somebody else which can be imported and used in our programs. <strong>pip</strong> is the package manager for python. You can use pip to install an external module on your system.</p>
-                    <h3 class="text-lg font-bold text-white mt-4">Comments</h3>
-                    <p>Comments are used to write something which the programmer does not want to execute.</p>
+                    <h3 class="text-lg font-bold text-white mt-2">1. What is Programming?</h3>
+                    <p>Programming is a way to instruct the computer to perform various tasks. Just like we use Hindi or English to communicate with each other, we use a programming language like Python to communicate with the computer.</p>
+                    
+                    <h3 class="text-lg font-bold text-white mt-4">2. What is Python & Features?</h3>
+                    <p>Python is a simple and easy-to-understand language which feels like reading simple English. </p>
                     <ul class="list-disc pl-5 mt-1 space-y-1">
-                        <li><strong>Single Line Comments:</strong> Start with a <code>#</code>.</li>
-                        <li><strong>Multiline Comments:</strong> Use triple quotes <code>"""</code> or <code>'''</code>.</li>
+                        <li>Easy to understand = Less development time</li>
+                        <li>Free and open source</li>
+                        <li>High level language</li>
+                        <li>Portable: Works on Linux / Windows / Mac.</li>
+                    </ul>
+
+                    <h3 class="text-lg font-bold text-white mt-4">3. Modules & pip</h3>
+                    <p>A <strong>module</strong> is a file containing code written by somebody else (usually) which can be imported and used in our programs. <strong>pip</strong> is the package manager for python. You can use pip to install an external module on your system.</p>
+                    <pre><code>pip install flask # Installs Flask Module</code></pre>
+                    <p><strong>Types of Modules:</strong> 1. Built-in (os, random), 2. External (tensorflow, flask).</p>
+                    
+                    <h3 class="text-lg font-bold text-white mt-4">4. Comments</h3>
+                    <p>Comments are used to write something which the programmer does not want to execute. This can be used to mark author name, date etc.</p>
+                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                        <li><strong>Single Line:</strong> Start with <code>#</code>.</li>
+                        <li><strong>Multiline:</strong> Use triple quotes <code>"""</code> or <code>'''</code>.</li>
                     </ul>
                 `,
                 theory_hi: `
-                    <h3 class="text-lg font-bold text-white mt-2">प्रोग्रामिंग क्या है?</h3>
-                    <p>जैसे हम एक-दूसरे से बात करने के लिए हिंदी या अंग्रेजी का उपयोग करते हैं, वैसे ही हम कंप्यूटर से बात करने के लिए पायथन जैसी प्रोग्रामिंग भाषा का उपयोग करते हैं। प्रोग्रामिंग कंप्यूटर को विभिन्न कार्य करने का निर्देश देने का एक तरीका है।</p>
-                    <h3 class="text-lg font-bold text-white mt-4">पायथन क्या है?</h3>
-                    <p>पायथन एक सरल और समझने में आसान भाषा है जो सरल अंग्रेजी पढ़ने जैसी लगती है। यह शुरुआती लोगों के लिए सीखने और समझने में आसान है।</p>
-                    <h3 class="text-lg font-bold text-white mt-4">मॉड्यूल और pip</h3>
-                    <p>एक <strong>मॉड्यूल</strong> किसी और द्वारा लिखे गए कोड वाली एक फाइल है जिसे हमारे कार्यक्रमों में आयात और उपयोग किया जा सकता है। <strong>pip</strong> पायथन के लिए पैकेज मैनेजर है।</p>
-                    <h3 class="text-lg font-bold text-white mt-4">टिप्पणियाँ (Comments)</h3>
-                    <p>टिप्पणियों का उपयोग कुछ ऐसा लिखने के लिए किया जाता है जिसे प्रोग्रामर निष्पादित नहीं करना चाहता।</p>
-                    <ul class="list-disc pl-5 mt-1 space-y-1">
-                        <li><strong>सिंगल लाइन टिप्पणियाँ:</strong> <code>#</code> से शुरू करें।</li>
-                        <li><strong>मल्टीलाइन टिप्पणियाँ:</strong> ट्रिपल कोट्स <code>"""</code> का उपयोग करें।</li>
-                    </ul>
+                    <h3 class="text-lg font-bold text-white mt-2">1. प्रोग्रामिंग क्या है?</h3>
+                    <p>प्रोग्रामिंग कंप्यूटर को विभिन्न कार्य करने का निर्देश देने का एक तरीका है।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. पायथन क्या है और विशेषताएँ?</h3>
+                    <p>पायथन एक सरल और समझने में आसान भाषा है। यह मुफ़्त और ओपन सोर्स है, और हर ऑपरेटिंग सिस्टम पर चलती है।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">3. मॉड्यूल और pip</h3>
+                    <p><strong>मॉड्यूल</strong> किसी और द्वारा लिखे गए कोड वाली एक फाइल है। <strong>pip</strong> पैकेज मैनेजर है जिससे हम बाहरी मॉड्यूल इंस्टॉल करते हैं।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">4. टिप्पणियाँ (Comments)</h3>
+                    <p>कोड को समझाने के लिए टिप्पणियाँ लिखी जाती हैं जो रन नहीं होतीं।</p>
                 `,
-                task: "Write a Python program to print 'Hello World' and include a single-line comment above it explaining what the code does.",
-                task_hi: "एक पायथन प्रोग्राम लिखें जो 'Hello World' प्रिंट करे और इसके ऊपर एक सिंगल-लाइन टिप्पणी (comment) शामिल करें।",
-                expectedOutput: "Hello World",
-                starterCode: "# Write your comment here\nprint('Hello World')"
+                task: "Write a Python program to print 'Twinkle twinkle little star' and include a single-line comment above it.",
+                task_hi: "एक पायथन प्रोग्राम लिखें जो 'Twinkle twinkle little star' प्रिंट करे और इसके ऊपर एक सिंगल-लाइन टिप्पणी शामिल करें।",
+                expectedOutput: "Twinkle twinkle little star",
+                starterCode: "# This is a comment\nprint('Twinkle twinkle little star')"
             },
             {
                 id: "ch2",
@@ -270,29 +270,37 @@
                 description: "Master variables, data types, operators, and user input.",
                 description_hi: "वेरिएबल्स, डेटा टाइप्स, ऑपरेटर और यूजर इनपुट में महारत हासिल करें।",
                 theory: `
-                    <h3 class="text-lg font-bold text-white mt-2">Variables</h3>
-                    <p>A variable is the name given to a memory location in a program. E.g., <code>a = 30</code>.</p>
-                    <h3 class="text-lg font-bold text-white mt-4">Data Types</h3>
-                    <p>Python automatically identifies the type of data. Primarily: Integers (int), Floating point numbers (float), Strings (str), Booleans (bool), and None.</p>
-                    <h3 class="text-lg font-bold text-white mt-4">Operators</h3>
+                    <h3 class="text-lg font-bold text-white mt-2">1. Variables & Rules for Identifiers</h3>
+                    <p>A variable is the name given to a memory location in a program.</p>
+                    <p><strong>Rules:</strong> Can contain alphabets, digits, underscores. Must start with alphabet or underscore. No whitespaces allowed.</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. Data Types</h3>
+                    <p>Python automatically identifies the data type.</p>
+                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                        <li>Integers (int) - e.g., <code>71</code></li>
+                        <li>Floating point (float) - e.g., <code>88.44</code></li>
+                        <li>Strings (str) - e.g., <code>"harry"</code></li>
+                        <li>Booleans (bool) - <code>True</code> or <code>False</code></li>
+                        <li>None</li>
+                    </ul>
+                    <h3 class="text-lg font-bold text-white mt-4">3. Operators</h3>
                     <p>Arithmetic (+, -, *, /), Assignment (=, +=), Comparison (==, >=, <=), Logical (and, or, not).</p>
-                    <h3 class="text-lg font-bold text-white mt-4">Type Casting & Input</h3>
-                    <p><code>type()</code> checks the data type. <code>int()</code>, <code>float()</code>, <code>str()</code> convert types. <code>input()</code> takes input from the keyboard as a string.</p>
+                    <h3 class="text-lg font-bold text-white mt-4">4. Type Casting & Input</h3>
+                    <p><code>type()</code> checks type. <code>int()</code>, <code>float()</code>, <code>str()</code> convert types. <code>input()</code> always returns a string.</p>
                 `,
                 theory_hi: `
-                    <h3 class="text-lg font-bold text-white mt-2">वेरिएबल्स</h3>
-                    <p>वेरिएबल वह नाम है जो प्रोग्राम में मेमोरी लोकेशन को दिया जाता है। जैसे, <code>a = 30</code>।</p>
-                    <h3 class="text-lg font-bold text-white mt-4">डेटा टाइप्स</h3>
-                    <p>पायथन स्वचालित रूप से डेटा का प्रकार पहचान लेता है। मुख्य रूप से: इंटीजर (int), फ्लोट (float), स्ट्रिंग (str), बूलियन (bool), और None।</p>
-                    <h3 class="text-lg font-bold text-white mt-4">ऑपरेटर्स</h3>
-                    <p>अंकगणितीय (+, -, *, /), असाइनमेंट (=, +=), तुलना (==, >=, <=), लॉजिकल (and, or, not)।</p>
-                    <h3 class="text-lg font-bold text-white mt-4">टाइप कास्टिंग और इनपुट</h3>
-                    <p><code>type()</code> डेटा टाइप की जाँच करता है। <code>input()</code> कीबोर्ड से इनपुट लेता है।</p>
+                    <h3 class="text-lg font-bold text-white mt-2">1. वेरिएबल्स</h3>
+                    <p>वेरिएबल मेमोरी लोकेशन का नाम है। इसमें अक्षर, अंक और अंडरस्कोर हो सकते हैं।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. डेटा टाइप्स</h3>
+                    <p>मुख्य रूप से: इंटीजर (int), फ्लोट (float), स्ट्रिंग (str), बूलियन (bool), और None।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">3. ऑपरेटर्स</h3>
+                    <p>अंकगणितीय (+, -, *, /), असाइनमेंट (=, +=), तुलना (==, >=, <=)।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">4. टाइप कास्टिंग और इनपुट</h3>
+                    <p><code>type()</code> से टाइप पता करें। <code>input()</code> कीबोर्ड से इनपुट लेता है (हमेशा स्ट्रिंग के रूप में)।</p>
                 `,
-                task: "Write a program to take two numbers, add them together, and print the result.",
-                task_hi: "दो संख्याएँ लेने, उन्हें जोड़ने और परिणाम प्रिंट करने के लिए एक प्रोग्राम लिखें।",
-                expectedOutput: "30",
-                starterCode: "a = 10\nb = 20\n# Add them and print\nprint(a + b)"
+                task: "Write a python program to find remainder when a number (a=10) is divided by z (z=3).",
+                task_hi: "जब एक संख्या (a=10) को z (z=3) से विभाजित किया जाता है तो शेषफल ज्ञात करने के लिए एक पायथन प्रोग्राम लिखें।",
+                expectedOutput: "1",
+                starterCode: "a = 10\nz = 3\n# Find remainder using %\nprint(a % z)"
             },
             {
                 id: "ch3",
@@ -301,36 +309,33 @@
                 description: "Explore string slicing, functions, and escape sequences.",
                 description_hi: "स्ट्रिंग स्लाइसिंग, फ़ंक्शंस और एस्केप सीक्वेंस का पता लगाएं।",
                 theory: `
-                    <h3 class="text-lg font-bold text-white mt-2">Strings</h3>
-                    <p>A string is a sequence of characters enclosed in quotes.</p>
-                    <h3 class="text-lg font-bold text-white mt-4">String Slicing</h3>
-                    <p>Syntax: <code>name[start:end]</code> (end is exclusive). Negative indices can also be used.</p>
-                    <h3 class="text-lg font-bold text-white mt-4">String Functions</h3>
+                    <h3 class="text-lg font-bold text-white mt-2">1. String Slicing</h3>
+                    <p>A string can be sliced to get a part of it. Syntax: <code>name[start:end]</code> (end is exclusive).</p>
+                    <p>Negative indices can also be used: <code>-1</code> is the last character.</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. String Functions</h3>
                     <ul class="list-disc pl-5 mt-1 space-y-1">
                         <li><code>len(str)</code> - Length of string</li>
                         <li><code>str.endswith("rry")</code> - Checks suffix</li>
                         <li><code>str.count("r")</code> - Counts occurrences</li>
                         <li><code>str.capitalize()</code> - Capitalizes first letter</li>
+                        <li><code>str.find(word)</code> - Finds index</li>
                         <li><code>str.replace(old, new)</code> - Replaces text</li>
                     </ul>
+                    <h3 class="text-lg font-bold text-white mt-4">3. Escape Sequences</h3>
+                    <p>Sequence of characters after a backslash. Examples: <code>\\n</code> (newline), <code>\\t</code> (tab), <code>\\\\</code> (backslash).</p>
                 `,
                 theory_hi: `
-                    <h3 class="text-lg font-bold text-white mt-2">स्ट्रिंग्स</h3>
-                    <p>स्ट्रिंग उद्धरण चिह्नों में संलग्न वर्णों का एक क्रम है।</p>
-                    <h3 class="text-lg font-bold text-white mt-4">स्ट्रिंग स्लाइसिंग</h3>
-                    <p>सिंटैक्स: <code>name[start:end]</code>। नेगेटिव इंडेक्स का भी उपयोग किया जा सकता है।</p>
-                    <h3 class="text-lg font-bold text-white mt-4">स्ट्रिंग फ़ंक्शंस</h3>
-                    <ul class="list-disc pl-5 mt-1 space-y-1">
-                        <li><code>len(str)</code> - लंबाई</li>
-                        <li><code>str.count("r")</code> - गिनती</li>
-                        <li><code>str.capitalize()</code> - पहला अक्षर बड़ा करें</li>
-                        <li><code>str.replace(old, new)</code> - टेक्स्ट बदलें</li>
-                    </ul>
+                    <h3 class="text-lg font-bold text-white mt-2">1. स्ट्रिंग स्लाइसिंग</h3>
+                    <p>स्ट्रिंग का एक हिस्सा निकालने के लिए सिंटैक्स: <code>name[start:end]</code>।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. स्ट्रिंग फ़ंक्शंस</h3>
+                    <p><code>len()</code>, <code>count()</code>, <code>capitalize()</code>, <code>replace()</code> आदि का उपयोग करें।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">3. एस्केप सीक्वेंस</h3>
+                    <p>बैकस्लैश के बाद विशेष वर्ण, जैसे <code>\\n</code> (नई लाइन के लिए)।</p>
                 `,
-                task: "Write a program to slice the string 'harry' from index 1 to 4 (excluding 4) and print it.",
-                task_hi: "स्ट्रिंग 'harry' को इंडेक्स 1 से 4 (4 को छोड़कर) तक स्लाइस करने और प्रिंट करने के लिए एक प्रोग्राम लिखें।",
-                expectedOutput: "arr",
-                starterCode: "name = 'harry'\n# Slice and print\nprint(name[1:4])"
+                task: "Write a program to detect double space in a string 'This is a  double space'.",
+                task_hi: "स्ट्रिंग 'This is a  double space' में डबल स्पेस का पता लगाने के लिए एक प्रोग्राम लिखें। (Output should be True or False)",
+                expectedOutput: "True",
+                starterCode: "str = 'This is a  double space'\n# Use find or in operator\nprint('  ' in str)"
             },
             {
                 id: "ch4",
@@ -339,23 +344,23 @@
                 description: "Learn about mutable lists and immutable tuples.",
                 description_hi: "म्यूटेबल लिस्ट और इम्यूटेबल टुपल्स के बारे में जानें।",
                 theory: `
-                    <h3 class="text-lg font-bold text-white mt-2">Lists</h3>
-                    <p>Lists are containers to store a set of values. Lists are mutable (can be changed).</p>
-                    <p><strong>Methods:</strong> <code>sort()</code>, <code>reverse()</code>, <code>append()</code>, <code>insert()</code>, <code>pop()</code>, <code>remove()</code>.</p>
-                    <h3 class="text-lg font-bold text-white mt-4">Tuples</h3>
-                    <p>A tuple is an immutable data type. A tuple with a single element needs a comma: <code>(1,)</code>.</p>
+                    <h3 class="text-lg font-bold text-white mt-2">1. Lists</h3>
+                    <p>Lists are containers to store a set of values of any data type. Lists are mutable.</p>
+                    <p><strong>Methods:</strong> <code>l1.sort()</code>, <code>l1.reverse()</code>, <code>l1.append(8)</code>, <code>l1.insert(3, 8)</code>, <code>l1.pop(2)</code>, <code>l1.remove(21)</code>.</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. Tuples</h3>
+                    <p>A tuple is an immutable data type. A tuple with a single element needs a comma: <code>a = (1,)</code>.</p>
+                    <p><strong>Methods:</strong> <code>a.count(1)</code>, <code>a.index(1)</code>.</p>
                 `,
                 theory_hi: `
-                    <h3 class="text-lg font-bold text-white mt-2">सूचियाँ (Lists)</h3>
-                    <p>सूचियाँ मूल्यों के एक सेट को संग्रहीत करने के लिए कंटेनर हैं। सूचियाँ परिवर्तनशील (mutable) होती हैं।</p>
-                    <p><strong>तरीके:</strong> <code>sort()</code>, <code>reverse()</code>, <code>append()</code>, <code>insert()</code>, <code>pop()</code>, <code>remove()</code>।</p>
-                    <h3 class="text-lg font-bold text-white mt-4">टुपल्स</h3>
-                    <p>टुपल एक अपरिवर्तनीय (immutable) डेटा प्रकार है।</p>
+                    <h3 class="text-lg font-bold text-white mt-2">1. सूचियाँ (Lists)</h3>
+                    <p>सूचियाँ मूल्यों के सेट को स्टोर करती हैं। ये परिवर्तनशील (mutable) होती हैं।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. टुपल्स</h3>
+                    <p>टुपल अपरिवर्तनीय (immutable) होता है। एकल तत्व के लिए कॉमा आवश्यक है: <code>(1,)</code>।</p>
                 `,
-                task: "Create a list 'l1' with numbers [1, 8, 7, 2]. Sort the list and print it.",
-                task_hi: "संख्या [1, 8, 7, 2] के साथ एक सूची 'l1' बनाएं। सूची को क्रमबद्ध करें और प्रिंट करें।",
-                expectedOutput: "[1, 2, 7, 8]",
-                starterCode: "l1 = [1, 8, 7, 2]\n# Sort and print\nl1.sort()\nprint(l1)"
+                task: "Write a program to store seven fruits in a list entered by the user. (Simulate by hardcoding the list).",
+                task_hi: "उपयोगकर्ता द्वारा दर्ज की गई सूची में सात फल संग्रहीत करने के लिए एक प्रोग्राम लिखें। (सूची को हार्डकोड करें)।",
+                expectedOutput: "['apple', 'banana', 'mango', 'orange', 'grapes', 'kiwi', 'pear']",
+                starterCode: "fruits = ['apple', 'banana', 'mango', 'orange', 'grapes', 'kiwi', 'pear']\nprint(fruits)"
             },
             {
                 id: "ch5",
@@ -363,18 +368,314 @@
                 title_hi: "अध्याय 5: डिक्शनरी और सेट्स",
                 description: "Discover key-value pairs and unique element collections.",
                 description_hi: "की-वैल्यू पेयर और अद्वितीय तत्वों के संग्रह की खोज करें।",
-                theory: `<h3 class="text-lg font-bold text-white mt-2">Dictionaries</h3><p>Collection of key-value pairs.</p><h3 class="text-lg font-bold text-white mt-4">Sets</h3><p>Collection of non-repetitive elements.</p>`,
-                theory_hi: `<h3 class="text-lg font-bold text-white mt-2">डिक्शनरी</h3><p>की-वैल्यू पेयर का संग्रह।</p><h3 class="text-lg font-bold text-white mt-4">सेट्स</h3><p>गैर-दोहराए जाने वाले तत्वों का संग्रह।</p>`,
-                task: "Create a set with values {1, 2, 3}. Add the number 4 to it and print the length of the set.",
-                task_hi: "मान {1, 2, 3} के साथ एक सेट बनाएं। इसमें संख्या 4 जोड़ें और सेट की लंबाई प्रिंट करें।",
-                expectedOutput: "4",
-                starterCode: "s = {1, 2, 3}\n# Add 4 and print length\ns.add(4)\nprint(len(s))"
+                theory: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. Dictionaries</h3>
+                    <p>Collection of key-value pairs. Unordered, mutable, indexed, no duplicate keys.</p>
+                    <p><strong>Methods:</strong> <code>a.items()</code>, <code>a.keys()</code>, <code>a.update()</code>, <code>a.get("name")</code>.</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. Sets</h3>
+                    <p>Collection of non-repetitive elements. Unordered, unindexed, no duplicates.</p>
+                    <p><strong>Operations:</strong> <code>s.add(1)</code>, <code>s.union({8, 11})</code>, <code>s.intersection({8, 11})</code>.</p>
+                `,
+                theory_hi: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. डिक्शनरी</h3>
+                    <p>की-वैल्यू पेयर का संग्रह। इसमें डुप्लीकेट की नहीं हो सकती।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. सेट्स</h3>
+                    <p>गैर-दोहराए जाने वाले तत्वों का संग्रह। इसमें कोई डुप्लीकेट नहीं होता।</p>
+                `,
+                task: "Write a program to create a dictionary of Hindi words with values as their English translation. Print the English translation of 'kursi'.",
+                task_hi: "हिंदी शब्दों की एक डिक्शनरी बनाएं जिसमें मान अंग्रेजी अनुवाद हों। 'kursi' का अंग्रेजी अनुवाद प्रिंट करें।",
+                expectedOutput: "chair",
+                starterCode: "words = {'kursi': 'chair', 'mez': 'table'}\nprint(words['kursi'])"
             },
-            { id: "ch6", title: "Ch 6: Conditionals", title_hi: "अध्याय 6: शर्तें", description: "If/Else", description_hi: "If/Else", theory: "If-Else", theory_hi: "If-Else", task: "Check age.", task_hi: "उम्र जांचें।", expectedOutput: "Adult", starterCode: "age = 22\nif age >= 18:\n    print('Adult')" },
-            { id: "ch7", title: "Ch 7: Loops", title_hi: "अध्याय 7: लूप्स", description: "For & While", description_hi: "For और While", theory: "Loops", theory_hi: "लूप्स", task: "Print 1 to 5.", task_hi: "1 से 5 प्रिंट करें।", expectedOutput: "1\n2\n3\n4\n5", starterCode: "for i in range(1, 6):\n    print(i)" },
-            { id: "ch8", title: "Ch 8: Functions", title_hi: "अध्याय 8: फ़ंक्शंस", description: "Reusable code", description_hi: "पुन: प्रयोज्य कोड", theory: "Functions", theory_hi: "फ़ंक्शंस", task: "Avg function.", task_hi: "औसत फ़ंक्शन।", expectedOutput: "15.0", starterCode: "def avg(a, b):\n    return (a + b) / 2\nprint(avg(10, 20))" },
-            { id: "ch9", title: "Ch 9: File I/O", title_hi: "अध्याय 9: फ़ाइल I/O", description: "Files", description_hi: "फ़ाइलें", theory: "Files", theory_hi: "फ़ाइलें", task: "Simulate read.", task_hi: "पढ़ने का अनुकरण करें।", expectedOutput: "File Read Successful", starterCode: "print('File Read Successful')" },
-            { id: "ch10", title: "Ch 10: OOP", title_hi: "अध्याय 10: OOP", description: "Classes", description_hi: "कक्षाएं", theory: "Classes", theory_hi: "कक्षाएं", task: "Calculator class.", task_hi: "कैलकुलेटर क्लास।", expectedOutput: "25", starterCode: "class Calculator:\n    def square(self, n):\n        return n * n\ncalc = Calculator()\nprint(calc.square(5))" },
+            {
+                id: "ch6",
+                title: "Ch 6: Conditional Expressions",
+                title_hi: "अध्याय 6: शर्तें",
+                description: "Control the flow of your program with if, elif, and else.",
+                description_hi: "if, elif और else के साथ अपने प्रोग्राम के प्रवाह को नियंत्रित करें।",
+                theory: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. If, Elif, Else</h3>
+                    <p>Multiway decision taken by our program due to certain conditions.</p>
+                    <pre><code>if (condition1):
+    print("yes")
+elif (condition2):
+    print("no")
+else:
+    print("maybe")</code></pre>
+                    <p><strong>Notes:</strong> Any number of elif can be used. Else is executed only if all conditions fail.</p>
+                `,
+                theory_hi: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. If, Elif, Else</h3>
+                    <p>शर्तों के आधार पर निर्णय लेने के लिए।</p>
+                    <pre><code>if (शर्त1):
+    print("हाँ")
+elif (शर्त2):
+    print("नहीं")
+else:
+    print("शायद")</code></pre>
+                `,
+                task: "Write a program to find the greatest of four numbers entered by the user. (Use a=10, b=20, c=5, d=15 and print the greatest).",
+                task_hi: "उपयोगकर्ता द्वारा दर्ज किए गए चार नंबरों में से सबसे बड़ा खोजने के लिए एक प्रोग्राम लिखें। (a=10, b=20, c=5, d=15 का उपयोग करें)।",
+                expectedOutput: "20",
+                starterCode: "a, b, c, d = 10, 20, 5, 15\n# Use if-elif\nif a > b and a > c and a > d: print(a)\nelif b > a and b > c and b > d: print(b)\nelif c > a and c > b and c > d: print(c)\nelse: print(d)"
+            },
+            {
+                id: "ch7",
+                title: "Ch 7: Loops in Python",
+                title_hi: "अध्याय 7: लूप्स",
+                description: "Iterate through data using while and for loops.",
+                description_hi: "while और for लूप्स का उपयोग करके डेटा के माध्यम से पुनरावृति करें।",
+                theory: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. While & For Loop</h3>
+                    <p><strong>While:</strong> Executes as long as condition is True.</p>
+                    <p><strong>For:</strong> Iterates through a sequence (list, tuple, string).</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. Range Function</h3>
+                    <p><code>range(start, stop, step_size)</code>. Note: `stop` is exclusive.</p>
+                    <h3 class="text-lg font-bold text-white mt-4">3. Loop Control Statements</h3>
+                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                        <li><code>break</code>: Exit loop immediately.</li>
+                        <li><code>continue</code>: Skip current iteration.</li>
+                        <li><code>pass</code>: Do nothing.</li>
+                    </ul>
+                `,
+                theory_hi: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. While और For लूप</h3>
+                    <p><strong>While:</strong> शर्त के सत्य होने तक चलता है।</p>
+                    <p><strong>For:</strong> किसी सूची या स्ट्रिंग पर लूप करता है।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. Range फ़ंक्शन</h3>
+                    <p><code>range(start, stop, step_size)</code>।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">3. लूप नियंत्रण कथन</h3>
+                    <p><code>break</code> (रोकें), <code>continue</code> (छोड़ें), <code>pass</code> (कुछ न करें)।</p>
+                `,
+                task: "Write a program to print multiplication table of a given number (n=5) using for loop.",
+                task_hi: "for लूप का उपयोग करके किसी दी गई संख्या (n=5) का पहाड़ा प्रिंट करने के लिए एक प्रोग्राम लिखें।",
+                expectedOutput: "5\n10\n15\n20\n25\n30\n35\n40\n45\n50",
+                starterCode: "n = 5\nfor i in range(1, 11):\n    print(n * i)"
+            },
+            {
+                id: "ch8",
+                title: "Ch 8: Functions & Recursions",
+                title_hi: "अध्याय 8: फ़ंक्शंस और रिकर्शन",
+                description: "Create reusable blocks of code and learn recursion.",
+                description_hi: "पुन: प्रयोज्य कोड ब्लॉक बनाएं और रिकर्शन सीखें।",
+                theory: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. Functions Basics</h3>
+                    <p>Group of statements performing a specific task. Defined using <code>def</code>.</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. Arguments & Defaults</h3>
+                    <p>Functions can accept arguments. Default values can be set: <code>def greet(name="stranger"):</code>.</p>
+                    <h3 class="text-lg font-bold text-white mt-4">3. Recursion</h3>
+                    <p>A function calling itself. Used for mathematical formulas like factorial.</p>
+                    <pre><code>def factorial(n):
+    if n == 0 or n == 1: return 1
+    return n * factorial(n-1)</code></pre>
+                `,
+                theory_hi: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. फ़ंक्शंस</h3>
+                    <p>विशिष्ट कार्य करने वाले कथनों का समूह। <code>def</code> से परिभाषित होते हैं।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. आर्ग्युमेंट्स</h3>
+                    <p>फ़ंक्शन में डिफ़ॉल्ट मान सेट किए जा सकते हैं।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">3. रिकर्शन</h3>
+                    <p>जब कोई फ़ंक्शन खुद को कॉल करता है।</p>
+                `,
+                task: "Write a python program using function to convert Celsius to Fahrenheit. (C=37)",
+                task_hi: "सेल्सियस को फारेनहाइट में बदलने के लिए फ़ंक्शन का उपयोग करके एक पायथन प्रोग्राम लिखें। (C=37)",
+                expectedOutput: "98.6",
+                starterCode: "def c_to_f(c):\n    return (c * 9/5) + 32\n\nprint(c_to_f(37))"
+            },
+            {
+                id: "ch9",
+                title: "Ch 9: File I/O",
+                title_hi: "अध्याय 9: फ़ाइल I/O",
+                description: "Read and write files using Python.",
+                description_hi: "पायथन का उपयोग करके फ़ाइलें पढ़ें और लिखें।",
+                theory: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. Opening & Reading Files</h3>
+                    <p><code>f = open("this.txt", "r")</code> followed by <code>f.read()</code> and <code>f.close()</code>.</p>
+                    <p>Other method: <code>f.readline()</code>.</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. Modes of Opening</h3>
+                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                        <li><code>r</code> - Read</li>
+                        <li><code>w</code> - Write (overwrites)</li>
+                        <li><code>a</code> - Append (adds to end)</li>
+                        <li><code>+</code> - Update</li>
+                    </ul>
+                    <h3 class="text-lg font-bold text-white mt-4">3. The 'with' Statement</h3>
+                    <p>Best way to open and close automatically.</p>
+                    <pre><code>with open("this.txt", "r") as f:
+    text = f.read()</code></pre>
+                `,
+                theory_hi: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. फ़ाइल खोलना और पढ़ना</h3>
+                    <p><code>open()</code>, <code>read()</code>, और <code>close()</code> फ़ंक्शंस का उपयोग करें।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. मोड्स</h3>
+                    <p><code>r</code> (पढ़ें), <code>w</code> (लिखें), <code>a</code> (जोड़ें)।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">3. 'with' स्टेटमेंट</h3>
+                    <p>फ़ाइल को स्वचालित रूप से बंद करने के लिए।</p>
+                `,
+                task: "Simulate a file read operation by printing 'File Read Successful'.",
+                task_hi: "'File Read Successful' प्रिंट करके फ़ाइल पढ़ने के ऑपरेशन का अनुकरण करें।",
+                expectedOutput: "File Read Successful",
+                starterCode: "print('File Read Successful')"
+            },
+            {
+                id: "ch10",
+                title: "Ch 10: Object Oriented Programming",
+                title_hi: "अध्याय 10: OOP",
+                description: "Learn classes, objects, attributes, and methods.",
+                description_hi: "कक्षाओं, वस्तुओं, विशेषताओं और तरीकों के बारे में जानें।",
+                theory: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. Class & Object</h3>
+                    <p>A class is a blueprint. An object is an instantiation of a class.</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. self Parameter & __init__</h3>
+                    <p><code>self</code> refers to the instance. <code>__init__</code> is a constructor run automatically on object creation.</p>
+                    <h3 class="text-lg font-bold text-white mt-4">3. Static Method</h3>
+                    <p>Use <code>@staticmethod</code> for functions that don't use the self parameter.</p>
+                `,
+                theory_hi: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. क्लास और ऑब्जेक्ट</h3>
+                    <p>क्लास एक ब्लूप्रिंट है, ऑब्जेक्ट उसका उदाहरण है।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. self और __init__</h3>
+                    <p><code>self</code> इंस्टेंस को दर्शाता है। <code>__init__</code> कंस्ट्रक्टर है।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">3. स्टैटिक मेथड</h3>
+                    <p><code>@staticmethod</code> का उपयोग करें।</p>
+                `,
+                task: "Write a class 'Calculator' capable of finding square of a number. Print square of 5.",
+                task_hi: "एक संख्या का वर्ग निकालने में सक्षम 'Calculator' क्लास लिखें। 5 का वर्ग प्रिंट करें।",
+                expectedOutput: "25",
+                starterCode: "class Calculator:\n    def square(self, n):\n        return n * n\n\ncalc = Calculator()\nprint(calc.square(5))"
+            },
+            {
+                id: "ch11",
+                title: "Ch 11: Inheritance & more OOPs",
+                title_hi: "अध्याय 11: इनहेरिटेंस",
+                description: "Build upon classes using inheritance and magic methods.",
+                description_hi: "इनहेरिटेंस और मैजिक मेथड्स का उपयोग करके क्लास बनाएं।",
+                theory: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. Inheritance</h3>
+                    <p>Creating a new class from an existing class.</p>
+                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                        <li><strong>Single:</strong> Child inherits one parent.</li>
+                        <li><strong>Multiple:</strong> Child inherits multiple parents.</li>
+                        <li><strong>Multilevel:</strong> Child becomes a parent for another child.</li>
+                    </ul>
+                    <h3 class="text-lg font-bold text-white mt-4">2. super() & Class Methods</h3>
+                    <p><code>super()</code> accesses methods of the superclass. <code>@classmethod</code> binds to the class.</p>
+                    <h3 class="text-lg font-bold text-white mt-4">3. Properties & Overloading</h3>
+                    <p><code>@property</code> makes a method act like an attribute. Dunder methods like <code>__add__</code> overload operators.</p>
+                `,
+                theory_hi: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. इनहेरिटेंस</h3>
+                    <p>मौजूदा क्लास से नई क्लास बनाना।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. super()</h3>
+                    <p>पैरेंट क्लास के मेथड्स को एक्सेस करने के लिए।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">3. ऑपरेटर ओवरलोडिंग</h3>
+                    <p>डंडर मेथड्स (जैसे <code>__add__</code>) का उपयोग करके ऑपरेटरों को बदलना।</p>
+                `,
+                task: "Create a class 'Pets' from a class 'Animals' and further create a class 'Dog' from 'Pets'. Add a method 'bark' to class 'Dog' and call it.",
+                task_hi: "'Animals' क्लास से 'Pets' बनाएं और 'Pets' से 'Dog' बनाएं। 'Dog' में 'bark' मेथड जोड़ें और उसे कॉल करें।",
+                expectedOutput: "Barking...",
+                starterCode: "class Animals: pass\nclass Pets(Animals): pass\nclass Dog(Pets):\n    def bark(self):\n        print('Barking...')\n\nd = Dog()\nd.bark()"
+            },
+            {
+                id: "ch12",
+                title: "Ch 12: Advanced Python 1",
+                title_hi: "अध्याय 12: उन्नत पायथन 1",
+                description: "Walrus operator, match-case, exceptions, and comprehensions.",
+                description_hi: "वॉलरस ऑपरेटर, मैच-केस, अपवाद और लिस्ट कॉम्प्रिहेंशन।",
+                theory: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. Exception Handling</h3>
+                    <p>Use <code>try</code>, <code>except</code>, <code>else</code>, and <code>finally</code> to catch errors.</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. New Features (Walrus, Match)</h3>
+                    <p><strong>Walrus (:=):</strong> Assign and evaluate in one line.</p>
+                    <p><strong>Match Case:</strong> Python's switch statement.</p>
+                    <h3 class="text-lg font-bold text-white mt-4">3. List Comprehensions & Enumerate</h3>
+                    <p>Elegant way to create lists: <code>[i for i in range(5) if i % 2 == 0]</code>.</p>
+                    <p>Loop with index: <code>for i, item in enumerate(list1):</code>.</p>
+                `,
+                theory_hi: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. अपवाद हैंडलिंग</h3>
+                    <p>त्रुटियों को पकड़ने के लिए <code>try</code> और <code>except</code> का उपयोग करें।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. नई विशेषताएं</h3>
+                    <p>वॉलरस ऑपरेटर (:=) और मैच केस।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">3. लिस्ट कॉम्प्रिहेंशन</h3>
+                    <p>सूचियों को बनाने का एक छोटा तरीका।</p>
+                `,
+                task: "Write a program to display a/b where a and b are integers. If b=0, display infinite by handling the 'ZeroDivisionError'.",
+                task_hi: "a/b प्रदर्शित करने के लिए एक प्रोग्राम लिखें जहाँ a और b पूर्णांक हैं। यदि b=0 है, तो 'ZeroDivisionError' को संभालकर 'infinite' प्रदर्शित करें।",
+                expectedOutput: "infinite",
+                starterCode: "a = 10\nb = 0\ntry:\n    print(a / b)\nexcept ZeroDivisionError:\n    print('infinite')"
+            },
+            {
+                id: "ch13",
+                title: "Ch 13: Advanced Python 2",
+                title_hi: "अध्याय 13: उन्नत पायथन 2",
+                description: "Lambda, Map, Filter, Reduce, and formatting.",
+                description_hi: "लैम्ब्डा, मैप, फ़िल्टर, रिड्यूस और फ़ॉर्मेटिंग।",
+                theory: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. Lambda Functions</h3>
+                    <p>Anonymous functions: <code>square = lambda x: x*x</code>.</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. Map, Filter, Reduce</h3>
+                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                        <li><strong>Map:</strong> Applies function to all items.</li>
+                        <li><strong>Filter:</strong> Items that return True.</li>
+                        <li><strong>Reduce:</strong> Rolling computation.</li>
+                    </ul>
+                    <h3 class="text-lg font-bold text-white mt-4">3. String Formatting</h3>
+                    <p><code>join()</code> and <code>format()</code> methods.</p>
+                `,
+                theory_hi: `
+                    <h3 class="text-lg font-bold text-white mt-2">1. लैम्ब्डा फ़ंक्शंस</h3>
+                    <p>एक पंक्ति में बने अनाम फ़ंक्शंस।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">2. मैप, फ़िल्टर, रिड्यूस</h3>
+                    <p>डेटा के संग्रह पर कार्य करने के लिए।</p>
+                    <h3 class="text-lg font-bold text-white mt-4">3. स्ट्रिंग फ़ॉर्मेटिंग</h3>
+                    <p><code>join()</code> और <code>format()</code>।</p>
+                `,
+                task: "Write a program to filter a list of numbers [2, 10, 15, 25] which are divisible by 5 and print the result.",
+                task_hi: "संख्याओं की सूची [2, 10, 15, 25] में से उन संख्याओं को फ़िल्टर करने के लिए एक प्रोग्राम लिखें जो 5 से विभाज्य हैं और परिणाम प्रिंट करें।",
+                expectedOutput: "[10, 15, 25]",
+                starterCode: "nums = [2, 10, 15, 25]\nresult = list(filter(lambda x: x % 5 == 0, nums))\nprint(result)"
+            },
+            {
+                id: "proj1",
+                title: "Project 1: Snake, Water, Gun",
+                title_hi: "प्रोजेक्ट 1: सांप, पानी, बंदूक",
+                description: "Build a mini game using conditionals and random module.",
+                description_hi: "कंडीशनल और रैंडम मॉड्यूल का उपयोग करके एक मिनी गेम बनाएं।",
+                theory: `
+                    <h3 class="text-lg font-bold text-white mt-2">Game Rules</h3>
+                    <p>Snake drinks Water (Snake wins). Water drowns Gun (Water wins). Gun kills Snake (Gun wins).</p>
+                    <p>Use the <code>random.choice()</code> module to let the computer make a choice.</p>
+                `,
+                theory_hi: `
+                    <h3 class="text-lg font-bold text-white mt-2">खेल के नियम</h3>
+                    <p>सांप पानी पीता है (सांप जीता)। पानी बंदूक को डुबोता है (पानी जीता)। बंदूक सांप को मारती है (बंदूक जीती)।</p>
+                    <p><code>random.choice()</code> का उपयोग करें।</p>
+                `,
+                task: "Simulate a game where computer picks 'Snake' and you pick 'Water'. Print who wins.",
+                task_hi: "एक गेम का अनुकरण करें जहाँ कंप्यूटर 'Snake' चुनता है और आप 'Water' चुनते हैं। प्रिंट करें कि कौन जीतता है।",
+                expectedOutput: "Computer Wins",
+                starterCode: "comp = 'Snake'\nyou = 'Water'\n# Snake wins against Water\nprint('Computer Wins')"
+            },
+            {
+                id: "proj2",
+                title: "Project 2: The Perfect Guess",
+                title_hi: "प्रोजेक्ट 2: द परफेक्ट गेस",
+                description: "Build a number guessing game.",
+                description_hi: "एक संख्या अनुमान लगाने वाला गेम बनाएं।",
+                theory: `
+                    <h3 class="text-lg font-bold text-white mt-2">Game Logic</h3>
+                    <p>Generate a random number. Ask the user to guess it. If they guess higher, print "Lower number please". If lower, print "Higher number please".</p>
+                `,
+                theory_hi: `
+                    <h3 class="text-lg font-bold text-white mt-2">खेल का तर्क</h3>
+                    <p>एक रैंडम संख्या उत्पन्न करें। उपयोगकर्ता से अनुमान लगाने के लिए कहें।</p>
+                `,
+                task: "Assume the target number is 50. You guessed 40. Print 'Higher number please'.",
+                task_hi: "मान लें कि लक्ष्य संख्या 50 है। आपने 40 का अनुमान लगाया। 'Higher number please' प्रिंट करें।",
+                expectedOutput: "Higher number please",
+                starterCode: "target = 50\nguess = 40\nif guess < target:\n    print('Higher number please')"
+            }
         ];
 
         // ============================================================================
@@ -430,7 +731,6 @@
             document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
             document.getElementById('lang-hi').addEventListener('click', () => setLanguage('hi'));
 
-            // Sidebar Toggle
             document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
                 isSidebarOpen = !isSidebarOpen;
                 const sidebar = document.getElementById('sidebar');
@@ -438,7 +738,6 @@
                 sidebar.classList.toggle('opacity-0', !isSidebarOpen);
             });
 
-            // Theory Toggle
             document.getElementById('toggle-theory-btn').addEventListener('click', () => {
                 isTheoryOpen = !isTheoryOpen;
                 const theoryPanel = document.getElementById('theory-panel');
@@ -447,7 +746,6 @@
                 btnText.innerText = isTheoryOpen ? (currentLang === 'en' ? 'Hide Theory' : 'थ्योरी छिपाएं') : (currentLang === 'en' ? 'Show Theory' : 'थ्योरी दिखाएं');
             });
 
-            // Maximize Console
             document.getElementById('maximize-console-btn').addEventListener('click', () => {
                 isConsoleMaximized = !isConsoleMaximized;
                 const panel = document.getElementById('console-panel');
@@ -460,7 +758,6 @@
                     panel.classList.remove('console-maximized');
                     btn.innerText = currentLang === 'en' ? 'Maximize' : 'बड़ा करें';
                 }
-                // CodeMirror needs to refresh when its container resizes
                 editor.refresh();
             });
         }
@@ -474,7 +771,6 @@
                 el.innerText = el.getAttribute(`data-${lang}`);
             });
 
-            // Fix maximize button text on language switch
             if (isConsoleMaximized) {
                 document.getElementById('maximize-console-btn').innerText = lang === 'en' ? 'Minimize' : 'छोटा करें';
             } else {
