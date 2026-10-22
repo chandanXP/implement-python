@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Python Interactive Handbook</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- CodeMirror (Code Editor) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+
+    <!-- Skulpt (Python in the browser) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt-stdlib.js"></script>
+
+    <!-- Particles.js (Background Graphics) -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+    <!-- Custom Styles -->
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #particles-js { position: fixed; width: 100%; height: 100%; z-index: -1; }
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .CodeMirror { height: 300px; border-radius: 0.5rem; font-size: 16px; }
+        .locked { opacity: 0.5; cursor: not-allowed; }
+        .console-output { font-family: monospace; background: #1e1e1e; color: #4ade80; min-height: 100px; padding: 10px; border-radius: 0.5rem; overflow-y: auto;}
+    </style>
+</head>
+<body class="h-screen flex overflow-hidden">
+
+    <!-- Background Graphics -->
+    <div id="particles-js"></div>
+
+    <!-- Sidebar -->
+    <aside class="w-1/4 glass-panel h-full p-6 overflow-y-auto border-r border-slate-700 z-10 flex flex-col">
+        <h1 class="text-2xl font-bold text-cyan-400 mb-6 border-b border-slate-700 pb-2">Python Handbook</h1>
+        <nav id="sidebar-nav" class="flex-grow space-y-2">
+            <!-- Navigation will be injected here by JS -->
+        </nav>
+        <div class="mt-4 pt-4 border-t border-slate-700 text-sm text-slate-400">
+            Progress: <span id="progress-text">0%</span>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="w-3/4 h-full p-8 overflow-y-auto z-10 flex flex-col">
+        
+        <!-- Header -->
+        <header class="mb-6">
+            <h2 id="lesson-title" class="text-3xl font-bold text-white mb-2">Welcome</h2>
+            <p id="lesson-description" class="text-slate-300">Select a chapter to begin your journey.</p>
+        </header>
+
+        <!-- Split View: Theory vs Editor -->
+        <div class="flex flex-col lg:flex-row gap-6 flex-grow">
+            
+            <!-- Theory & Task Section -->
+            <div class="w-full lg:w-1/2 glass-panel p-6 rounded-xl overflow-y-auto">
+                <div id="theory-content" class="prose prose-invert max-w-none mb-6">
+                    <p>Welcome to the Ultimate Python Handbook.</p>
+                </div>
+                <div class="mt-6 border-t border-slate-600 pt-4">
+                    <h3 class="text-xl font-bold text-yellow-400 mb-2">Your Task</h3>
+                    <p id="task-description" class="text-sm text-slate-300"></p>
+                </div>
+            </div>
+
+            <!-- Interactive Code Editor Section -->
+            <div class="w-full lg:w-1/2 flex flex-col gap-4">
+                <div class="glass-panel p-4 rounded-xl">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-bold text-cyan-400">main.py</span>
+                        <button id="run-btn" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1 rounded text-sm transition">Run Code</button>
+                    </div>
+                    <textarea id="code-editor"></textarea>
+                </div>
+
+                <!-- Console Output -->
+                <div class="glass-panel p-4 rounded-xl flex-grow flex flex-col">
+                    <span class="text-sm font-bold text-slate-400 mb-2">Console Output</span>
+                    <div id="console" class="console-output flex-grow"></div>
+                    
+                    <button id="submit-btn" class="mt-4 bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded font-bold transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>Submit Task</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Application Logic -->
+    <script>
+        // --- 1. CURRICULUM DATA ---
+        // You can extend this object to include all 13 chapters based on the PDF.
+        const curriculum = [
+            {
+                id: "ch1",
+                title: "Ch 1: Modules, Comments & pip",
+                theory: `
+                    <h3 class="text-xl font-bold">Modules</h3>
+                    <p>A module is a file containing code written by somebody else which can be imported and used in our programs.</p>
+                    <h3 class="text-xl font-bold mt-4">pip</h3>
+                    <p>Pip is the package manager for python. You can use pip to install a module on your system.</p>
+                    <h3 class="text-xl font-bold mt-4">Comments</h3>
+                    <p>Comments are used to write something which the programmer does not want to execute. Single line comments start with <code>#</code>. Multiline comments use triple quotes <code>"""</code>.</p>
+                `,
+                task: "Write a Python program that prints 'Hello World' and includes a single-line comment above it explaining what the code does.",
+                expectedOutput: "Hello World\n", // What the code must output to pass
+                starterCode: "# Write your comment here\nprint('Hello World')"
+            },
+            {
+                id: "ch2",
+                title: "Ch 2: Variables & Data Types",
+                theory: `
+                    <h3 class="text-xl font-bold">Variables</h3>
+                    <p>A variable is the name given to a memory location in a program. E.g., <code>a = 30</code></p>
+                    <h3 class="text-xl font-bold mt-4">Data Types</h3>
+                    <p>Primarily: Integers (int), Floating point numbers (float), Strings (str), Booleans (bool), and None.</p>
+                    <h3 class="text-xl font-bold mt-4">Input() Function</h3>
+                    <p>This function allows the user to take input from the keyboard as a string. E.g., <code>a = input("Enter name: ")</code></p>
+                `,
+                task: "Write a program to add two numbers and find the remainder when they are divided. Print the result.",
+                expectedOutput: "Remainder is: 1\n", 
+                starterCode: "a = 10\nb = 3\n# Calculate remainder using modulus operator (%)\n"
+            },
+            // Add Chapter 3, 4, 5... following the exact same structure.
+        ];
+
+        // --- 2. STATE & VARIABLES ---
+        let currentChapterIndex = 0;
+        let editor;
+        let completedChapters = JSON.parse(localStorage.getItem('pythonProgress')) || [];
+
+        // --- 3. INITIALIZATION ---
+        document.addEventListener("DOMContentLoaded", () => {
+            initParticles();
+            initEditor();
+            renderSidebar();
+            loadChapter(0);
+            setupSkulpt();
+        });
+
+        function initParticles() {
+            particlesJS("particles-js", {
+                "particles": {
+                    "number": { "value": 50 },
+                    "color": { "value": "#38bdf8" },
+                    "shape": { "type": "circle" },
+                    "opacity": { "value": 0.3 },
+                    "size": { "value": 3 },
+                    "move": { "speed": 2 }
+                }
+            });
+        }
+
+        function initEditor() {
+            editor = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
+                mode: "python",
+                theme: "dracula",
+                lineNumbers: true,
+                indentUnit: 4
+            });
+        }
+
+        // --- 4. SKULPT (PYTHON EXECUTION) SETUP ---
+        function setupSkulpt() {
+            function builtinRead(x) {
+                if (Skulpt.mods["python3"]["builtin"][x]) return Skulpt.mods["python3"]["builtin"][x];
+                if (Skulpt.mods["python3"]["stdlib"][x]) return Skulpt.mods["python3"]["stdlib"][x];
+                throw "File not found: '" + x + "'";
+            }
+            Skulpt.configure({ read: builtinRead });
+        }
+
+        function runPythonCode() {
+            const code = editor.getValue();
+            const outputDiv = document.getElementById("console");
+            outputDiv.innerHTML = ""; // Clear console
+            let outputText = "";
+
+            function outf(text) {
+                outputText += text;
+                outputDiv.innerHTML += text.replace(/\n/g, "<br>");
+            }
+
+            function builtinRead(x) {
+                if (Skulpt.mods["python3"]["builtin"][x]) return Skulpt.mods["python3"]["builtin"][x];
+                if (Skulpt.mods["python3"]["stdlib"][x]) return Skulpt.mods["python3"]["stdlib"][x];
+                throw "File not found: '" + x + "'";
+            }
+
+            Skulpt.configure({ output: outf, read: builtinRead });
+            Skulpt.importMainWithBody("<stdin>", false, code);
+
+            return outputText;
+        }
+
+        // --- 5. UI RENDERING & LOGIC ---
+        function renderSidebar() {
+            const nav = document.getElementById("sidebar-nav");
+            nav.innerHTML = "";
+            
+            curriculum.forEach((chapter, index) => {
+                const isCompleted = completedChapters.includes(chapter.id);
+                const isUnlocked = index === 0 || completedChapters.includes(curriculum[index - 1].id);
+                
+                const btn = document.createElement("button");
+                btn.className = `w-full text-left p-3 rounded-lg transition ${index === currentChapterIndex ? 'bg-cyan-900 border-l-4 border-cyan-400' : 'hover:bg-slate-700'} ${!isUnlocked ? 'locked' : ''}`;
+                btn.innerHTML = `${chapter.title} ${isCompleted ? '✅' : ''}`;
+                
+                if (isUnlocked) {
+                    btn.onclick = () => loadChapter(index);
+                }
+                nav.appendChild(btn);
+            });
+
+            // Update Progress Bar
+            const percent = Math.round((completedChapters.length / curriculum.length) * 100);
+            document.getElementById("progress-text").innerText = percent + "%";
+        }
+
+        function loadChapter(index) {
+            currentChapterIndex = index;
+            const chapter = curriculum[index];
+            
+            document.getElementById("lesson-title").innerText = chapter.title;
+            document.getElementById("theory-content").innerHTML = chapter.theory;
+            document.getElementById("task-description").innerText = chapter.task;
+            
+            editor.setValue(chapter.starterCode);
+            document.getElementById("console").innerHTML = "Waiting for execution...";
+            
+            // Reset Submit Button
+            const submitBtn = document.getElementById("submit-btn");
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Submit Task";
+
+            renderSidebar();
+        }
+
+        // --- 6. EVENT LISTENERS ---
+        document.getElementById("run-btn").addEventListener("click", () => {
+            runPythonCode();
+        });
+
+        document.getElementById("submit-btn").addEventListener("click", () => {
+            const output = runPythonCode();
+            const chapter = curriculum[currentChapterIndex];
+            
+            // Simple output validation (can be made more robust)
+            if (output.trim() === chapter.expectedOutput.trim()) {
+                alert("🎉 Correct! Task passed.");
+                if (!completedChapters.includes(chapter.id)) {
+                    completedChapters.push(chapter.id);
+                    localStorage.setItem('pythonProgress', JSON.stringify(completedChapters));
+                }
+                renderSidebar();
+                
+                // Automatically unlock/load next chapter if it exists
+                if (currentChapterIndex + 1 < curriculum.length) {
+                    loadChapter(currentChapterIndex + 1);
+                } else {
+                    alert("🏆 You have completed the handbook!");
+                }
+            } else {
+                alert("❌ Output doesn't match the expected result. Try again!");
+                console.log("Expected:", chapter.expectedOutput);
+                console.log("Got:", output);
+            }
+        });
+    </script>
+</body>
+</html>
