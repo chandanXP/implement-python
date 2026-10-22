@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ultimate Interactive Python Handbook</title>
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- CodeMirror (Code Editor) -->
+
+    <!-- CodeMirror -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
@@ -16,94 +16,85 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closebrackets.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/matchbrackets.min.js"></script>
 
-    <!-- Skulpt (Python in the browser) - Corrected CDN -->
-    <script src="https://cdn.jsdelivr.net/gh/skulpt/skulpt-dist/skulpt.min.js" type="text/javascript"></script>
-    <script src="https://cdn.jsdelivr.net/gh/skulpt/skulpt-dist/skulpt-stdlib.js" type="text/javascript"></script>
+    <!-- Pyodide (Python in the browser) -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js"></script>
 
-    <!-- Particles.js (Background Graphics) -->
+    <!-- Particles.js -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
-    <!-- Custom Styles and Animations -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;800&display=swap');
-        
-        body { 
-            background-color: #0f172a; 
-            color: #f8fafc; 
-            font-family: 'Inter', sans-serif; 
+
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
             margin: 0;
             padding: 0;
-            overflow: hidden; 
+            overflow: hidden;
         }
 
         h1, h2, h3 { font-weight: 800; }
         code { font-family: 'Fira Code', monospace; background: #1e293b; padding: 0.2rem 0.4rem; border-radius: 0.25rem; color: #38bdf8; }
-        
-        #particles-js { 
-            position: fixed; 
-            width: 100%; 
-            height: 100%; 
-            z-index: -1; 
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
             background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
         }
 
-        .glass-panel { 
-            background: rgba(30, 41, 59, 0.75); 
-            backdrop-filter: blur(12px); 
-            border: 1px solid rgba(255,255,255,0.1); 
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
-        .CodeMirror { 
-            height: 350px; 
-            border-radius: 0.5rem; 
-            font-size: 15px; 
+        .CodeMirror {
+            height: 350px;
+            border-radius: 0.5rem;
+            font-size: 15px;
             font-family: 'Fira Code', monospace;
             border: 1px solid #334155;
         }
 
         .locked { opacity: 0.4; cursor: not-allowed; filter: grayscale(100%); pointer-events: none; }
         .active-chapter { background: rgba(56, 189, 248, 0.15); border-left: 4px solid #38bdf8; color: #38bdf8; font-weight: 600; }
-        
-        .console-output { 
-            font-family: 'Fira Code', monospace; 
-            background: #000000; 
-            color: #4ade80; 
-            min-height: 120px; 
-            padding: 15px; 
-            border-radius: 0.5rem; 
-            overflow-y: auto; 
+
+        .console-output {
+            font-family: 'Fira Code', monospace;
+            background: #000000;
+            color: #4ade80;
+            min-height: 120px;
+            padding: 15px;
+            border-radius: 0.5rem;
+            overflow-y: auto;
             border: 1px solid #334155;
             white-space: pre-wrap;
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-        /* Animations */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
     </style>
 </head>
 <body class="h-screen flex overflow-hidden">
 
-    <!-- Background Graphics -->
     <div id="particles-js"></div>
 
-    <!-- Sidebar Navigation -->
+    <!-- Sidebar -->
     <aside class="w-1/4 glass-panel h-full p-6 overflow-y-auto z-10 flex flex-col border-r border-slate-700">
         <div class="mb-8 flex items-center gap-3">
             <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python" class="w-8 h-8">
             <h1 class="text-xl font-bold text-white tracking-wide">Ultimate Handbook</h1>
         </div>
-        
-        <nav id="sidebar-nav" class="flex-grow space-y-2 text-sm">
-            <!-- Navigation injected via JS -->
-        </nav>
-        
+        <nav id="sidebar-nav" class="flex-grow space-y-2 text-sm"></nav>
         <div class="mt-6 pt-6 border-t border-slate-700">
             <div class="flex justify-between items-center mb-2">
                 <span class="text-xs text-slate-400 uppercase tracking-wider font-bold">Your Progress</span>
@@ -116,10 +107,8 @@
         </div>
     </aside>
 
-    <!-- Main Application Area -->
+    <!-- Main -->
     <main class="w-3/4 h-full p-8 overflow-y-auto z-10 flex flex-col">
-        
-        <!-- Header -->
         <header class="mb-6 flex justify-between items-end border-b border-slate-700 pb-4">
             <div>
                 <h2 id="lesson-title" class="text-3xl font-bold text-white mb-2">Loading...</h2>
@@ -130,15 +119,10 @@
             </div>
         </header>
 
-        <!-- Split View -->
         <div class="flex flex-col xl:flex-row gap-6 flex-grow">
-            
-            <!-- Left Column: Theory & Tasks -->
+            <!-- Theory -->
             <div class="w-full xl:w-5/12 glass-panel p-6 rounded-xl overflow-y-auto flex flex-col fade-in" id="theory-panel">
-                <div id="theory-content" class="prose prose-invert max-w-none text-slate-300 text-sm leading-relaxed mb-8">
-                    <!-- Injected HTML goes here -->
-                </div>
-                
+                <div id="theory-content" class="prose prose-invert max-w-none text-slate-300 text-sm leading-relaxed mb-8"></div>
                 <div class="mt-auto bg-slate-800 p-4 rounded-lg border border-slate-600">
                     <div class="flex items-center gap-2 mb-2">
                         <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
@@ -151,10 +135,8 @@
                 </div>
             </div>
 
-            <!-- Right Column: Code Editor & Console -->
+            <!-- Editor & Console -->
             <div class="w-full xl:w-7/12 flex flex-col gap-6">
-                
-                <!-- Editor -->
                 <div class="glass-panel p-4 rounded-xl flex-grow">
                     <div class="flex justify-between items-center mb-3">
                         <div class="flex gap-2">
@@ -171,29 +153,25 @@
                     <textarea id="code-editor"></textarea>
                 </div>
 
-                <!-- Console -->
                 <div class="glass-panel p-4 rounded-xl h-64 flex flex-col">
                     <div class="flex justify-between items-center mb-2">
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Terminal Output</span>
                         <button id="clear-console" class="text-xs text-slate-500 hover:text-slate-300">Clear</button>
                     </div>
-                    <div id="console" class="console-output flex-grow font-mono text-sm">> Ready for execution...</div>
-                    
-                    <button id="submit-btn" class="mt-4 bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2.5 rounded-lg font-bold transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-cyan-900/50 flex justify-center items-center gap-2">
+                    <div id="console" class="console-output flex-grow font-mono text-sm">> Initializing Pyodide... Please wait.</div>
+                    <button id="submit-btn" class="mt-4 bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2.5 rounded-lg font-bold transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-cyan-900/50 flex justify-center items-center gap-2" disabled>
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Validate & Complete Chapter
+                        Loading Python Environment...
                     </button>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Application Logic Script -->
     <script>
         // ============================================================================
-        // 1. CURRICULUM DATA
+        // CURRICULUM DATA (Your existing chapters go here)
         // ============================================================================
-        
         const curriculum = [
             {
                 id: "ch1",
@@ -202,13 +180,10 @@
                 theory: `
                     <h3 class="text-xl font-bold text-white mt-4">What is Programming?</h3>
                     <p>Just like we use Hindi or English to communicate with each other, we use a programming language like Python to communicate with the computer. Programming is a way to instruct the computer to perform various tasks.</p>
-                    
                     <h3 class="text-xl font-bold text-white mt-6">What is Python?</h3>
                     <p>Python is a simple and easy-to-understand language which feels like reading simple English. This pseudo-code nature is easy to learn and understandable by beginners.</p>
-                    
                     <h3 class="text-xl font-bold text-white mt-6">Modules & pip</h3>
                     <p>A <strong>module</strong> is a file containing code written by somebody else (usually) which can be imported and used in our programs. <strong>pip</strong> is the package manager for python. You can use pip to install an external module on your system (e.g., <code>pip install flask</code>).</p>
-                    
                     <h3 class="text-xl font-bold text-white mt-6">Comments</h3>
                     <p>Comments are used to write something which the programmer does not want to execute. This can be used to mark the author's name, date, etc.</p>
                     <ul class="list-disc pl-5 mt-2 space-y-1">
@@ -227,27 +202,14 @@
                 theory: `
                     <h3 class="text-xl font-bold text-white mt-4">Variables</h3>
                     <p>A variable is the name given to a memory location in a program. E.g., <code>a = 30</code>.</p>
-                    
                     <h3 class="text-xl font-bold text-white mt-6">Data Types</h3>
-                    <p>Python automatically identifies the type of data. Primarily:</p>
-                    <ul class="list-disc pl-5 mt-2 space-y-1">
-                        <li>Integers (int) - e.g., <code>71</code></li>
-                        <li>Floating point numbers (float) - e.g., <code>88.44</code></li>
-                        <li>Strings (str) - e.g., <code>"harry"</code></li>
-                        <li>Booleans (bool) - <code>True</code> or <code>False</code></li>
-                        <li>None</li>
-                    </ul>
-                    
-                    <h3 class="text-xl font-bold text-white mt-6">Rules for Identifiers</h3>
-                    <p>A variable name can contain alphabets, digits, and underscores. It can only start with an alphabet or underscore. No whitespace allowed.</p>
-                    
+                    <p>Python automatically identifies the type of data. Primarily: Integers (int), Floating point numbers (float), Strings (str), Booleans (bool), and None.</p>
                     <h3 class="text-xl font-bold text-white mt-6">Operators</h3>
                     <p>Arithmetic (+, -, *, /), Assignment (=, +=), Comparison (==, >=, <=), Logical (and, or, not).</p>
-                    
                     <h3 class="text-xl font-bold text-white mt-6">Type Casting & Input</h3>
                     <p><code>type()</code> checks the data type. <code>int()</code>, <code>float()</code>, <code>str()</code> convert types. <code>input()</code> takes input from the keyboard as a string.</p>
                 `,
-                task: "Write a program to take two numbers as input from the user, add them together, and print the result. (Note: The browser will prompt you for input).",
+                task: "Write a program to take two numbers as input from the user, add them together, and print the result. (The browser will prompt you for input).",
                 expectedOutput: "30",
                 starterCode: "a = 10\nb = 20\n# Add them and print\nprint(a + b)"
             },
@@ -257,24 +219,17 @@
                 description: "Explore string slicing, functions, and escape sequences.",
                 theory: `
                     <h3 class="text-xl font-bold text-white mt-4">Strings</h3>
-                    <p>A string is a sequence of characters enclosed in quotes. They can be single, double, or triple quoted.</p>
-                    
+                    <p>A string is a sequence of characters enclosed in quotes.</p>
                     <h3 class="text-xl font-bold text-white mt-6">String Slicing</h3>
-                    <p>A string can be sliced to get a part of it. Syntax: <code>name[start:end]</code> (end is exclusive).</p>
-                    <p>Negative indices can also be used: <code>-1</code> is the last character, <code>-2</code> is the second last.</p>
-                    
+                    <p>Syntax: <code>name[start:end]</code> (end is exclusive). Negative indices can also be used.</p>
                     <h3 class="text-xl font-bold text-white mt-6">String Functions</h3>
                     <ul class="list-disc pl-5 mt-2 space-y-1">
                         <li><code>len(str)</code> - Length of string</li>
                         <li><code>str.endswith("rry")</code> - Checks suffix</li>
                         <li><code>str.count("r")</code> - Counts occurrences</li>
                         <li><code>str.capitalize()</code> - Capitalizes first letter</li>
-                        <li><code>str.find(word)</code> - Finds index of word</li>
                         <li><code>str.replace(old, new)</code> - Replaces text</li>
                     </ul>
-
-                    <h3 class="text-xl font-bold text-white mt-6">Escape Sequences</h3>
-                    <p>Sequence of characters after a backslash. Examples: <code>\\n</code> (newline), <code>\\t</code> (tab), <code>\\\\</code> (backslash).</p>
                 `,
                 task: "Write a program to slice the string 'harry' from index 1 to 4 (excluding 4) and print it.",
                 expectedOutput: "arr",
@@ -286,12 +241,10 @@
                 description: "Learn about mutable lists and immutable tuples.",
                 theory: `
                     <h3 class="text-xl font-bold text-white mt-4">Lists</h3>
-                    <p>Lists are containers to store a set of values of any data type. E.g., <code>friends = ["apple", "akash", 7, False]</code>. Lists are mutable (can be changed).</p>
-                    <p><strong>Methods:</strong> <code>l1.sort()</code>, <code>l1.reverse()</code>, <code>l1.append(8)</code>, <code>l1.insert(3, 8)</code>, <code>l1.pop(2)</code>, <code>l1.remove(21)</code>.</p>
-                    
+                    <p>Lists are containers to store a set of values. Lists are mutable (can be changed).</p>
+                    <p><strong>Methods:</strong> <code>sort()</code>, <code>reverse()</code>, <code>append()</code>, <code>insert()</code>, <code>pop()</code>, <code>remove()</code>.</p>
                     <h3 class="text-xl font-bold text-white mt-6">Tuples</h3>
-                    <p>A tuple is an immutable data type (cannot be changed). E.g., <code>a = (1, 7, 2)</code>. A tuple with a single element needs a comma: <code>a = (1,)</code>.</p>
-                    <p><strong>Methods:</strong> <code>a.count(1)</code>, <code>a.index(1)</code>.</p>
+                    <p>A tuple is an immutable data type. A tuple with a single element needs a comma: <code>(1,)</code>.</p>
                 `,
                 task: "Create a list 'l1' with numbers [1, 8, 7, 2]. Sort the list and print it.",
                 expectedOutput: "[1, 2, 7, 8]",
@@ -303,14 +256,11 @@
                 description: "Discover key-value pairs and unique element collections.",
                 theory: `
                     <h3 class="text-xl font-bold text-white mt-4">Dictionaries</h3>
-                    <p>A dictionary is a collection of key-value pairs. E.g., <code>a = {"name": "harry", "marks": 100}</code>.</p>
-                    <p><strong>Properties:</strong> Unordered, mutable, indexed, cannot contain duplicate keys.</p>
-                    <p><strong>Methods:</strong> <code>a.items()</code>, <code>a.keys()</code>, <code>a.update({"friend": "Rohan"})</code>, <code>a.get("name")</code>.</p>
-                    
+                    <p>Collection of key-value pairs. Unordered, mutable, indexed, no duplicate keys.</p>
+                    <p><strong>Methods:</strong> <code>items()</code>, <code>keys()</code>, <code>update()</code>, <code>get()</code>.</p>
                     <h3 class="text-xl font-bold text-white mt-6">Sets</h3>
-                    <p>A set is a collection of non-repetitive elements. E.g., <code>s = {1, 2}</code> or <code>s = set()</code>.</p>
-                    <p><strong>Properties:</strong> Unordered, unindexed, cannot change items, cannot contain duplicates.</p>
-                    <p><strong>Operations:</strong> <code>s.add(1)</code>, <code>len(s)</code>, <code>s.remove(8)</code>, <code>s.pop()</code>, <code>s.clear()</code>, <code>s.union({8, 11})</code>, <code>s.intersection({8, 11})</code>.</p>
+                    <p>Collection of non-repetitive elements. Unordered, unindexed, no duplicates.</p>
+                    <p><strong>Operations:</strong> <code>add()</code>, <code>remove()</code>, <code>pop()</code>, <code>clear()</code>, <code>union()</code>, <code>intersection()</code>.</p>
                 `,
                 task: "Create a set with values {1, 2, 3}. Add the number 4 to it and print the length of the set.",
                 expectedOutput: "4",
@@ -322,21 +272,8 @@
                 description: "Control the flow of your program with if, elif, and else.",
                 theory: `
                     <h3 class="text-xl font-bold text-white mt-4">Conditionals</h3>
-                    <p>If-else and elif statements are a multiway decision taken by our program due to certain conditions in our code.</p>
-                    
-                    <p class="mt-2"><strong>Syntax:</strong></p>
-                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>if (condition1):
-    print("yes")
-elif (condition2):
-    print("no")
-else:
-    print("maybe")</code></pre>
-
-                    <p class="mt-4"><strong>Important notes:</strong></p>
-                    <ul class="list-disc pl-5 mt-2 space-y-1">
-                        <li>There can be any number of elif statements.</li>
-                        <li>The last else is executed only if all the conditions inside if/elifs fail.</li>
-                    </ul>
+                    <p>If-else and elif statements are a multiway decision taken by our program due to certain conditions.</p>
+                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>if (condition1):\n    print("yes")\nelif (condition2):\n    print("no")\nelse:\n    print("maybe")</code></pre>
                 `,
                 task: "Write a program to check if a number is greater than 18. If yes, print 'Adult', else print 'Minor'. Use the variable `age = 22`.",
                 expectedOutput: "Adult",
@@ -348,29 +285,10 @@ else:
                 description: "Iterate through data using while and for loops.",
                 theory: `
                     <h3 class="text-xl font-bold text-white mt-4">Loops</h3>
-                    <p>Loops make it easy for a programmer to tell the computer which set of instructions to repeat and how!</p>
-                    
-                    <h3 class="text-xl font-bold text-white mt-6">While Loop</h3>
-                    <p>Executes a block of code as long as a condition remains True.</p>
-                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>i = 0
-while i < 5:
-    print("Harry")
-    i = i + 1</code></pre>
-
-                    <h3 class="text-xl font-bold text-white mt-6">For Loop</h3>
-                    <p>Used to iterate through a sequence like list, tuple, or string.</p>
-                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>for item in [1, 7, 8]:
-    print(item)</code></pre>
-
-                    <h3 class="text-xl font-bold text-white mt-6">Range Function</h3>
-                    <p><code>range(start, stop, step_size)</code> generates a sequence of numbers.</p>
-
-                    <h3 class="text-xl font-bold text-white mt-6">Control Statements</h3>
-                    <ul class="list-disc pl-5 mt-2 space-y-1">
-                        <li><strong>break:</strong> Exit the loop immediately.</li>
-                        <li><strong>continue:</strong> Skip the current iteration and move to the next.</li>
-                        <li><strong>pass:</strong> Do nothing (null statement).</li>
-                    </ul>
+                    <p><strong>While Loop:</strong> Executes as long as a condition remains True.</p>
+                    <p><strong>For Loop:</strong> Iterates through a sequence like list, tuple, or string.</p>
+                    <p><strong>Range Function:</strong> <code>range(start, stop, step_size)</code> generates a sequence of numbers.</p>
+                    <p><strong>Control Statements:</strong> <code>break</code> (exit loop), <code>continue</code> (skip iteration), <code>pass</code> (do nothing).</p>
                 `,
                 task: "Write a for loop to print the numbers 1 to 5 (inclusive) using the range() function.",
                 expectedOutput: "1\n2\n3\n4\n5",
@@ -382,25 +300,10 @@ while i < 5:
                 description: "Create reusable blocks of code and learn recursion.",
                 theory: `
                     <h3 class="text-xl font-bold text-white mt-4">Functions</h3>
-                    <p>A function is a group of statements performing a specific task. It makes the program modular and reusable.</p>
-                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>def func1():
-    print('hello')
-
-func1() # Function call</code></pre>
-                    
-                    <h3 class="text-xl font-bold text-white mt-6">Functions with Arguments</h3>
-                    <p>A function can accept values (arguments) and return a value.</p>
-                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>def greet(name):
-    return "Hello " + name
-
-a = greet("harry")
-print(a) # Output: Hello harry</code></pre>
-
-                    <h3 class="text-xl font-bold text-white mt-6">Default Parameters</h3>
-                    <p>You can set a default value: <code>def greet(name="stranger"):</code>.</p>
-
+                    <p>A function is a group of statements performing a specific task.</p>
+                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>def greet(name):\n    return "Hello " + name\n\nprint(greet("harry"))</code></pre>
                     <h3 class="text-xl font-bold text-white mt-6">Recursion</h3>
-                    <p>Recursion is a function which calls itself. E.g., calculating factorial: <code>factorial(n) = n * factorial(n-1)</code>.</p>
+                    <p>Recursion is a function which calls itself. E.g., calculating factorial.</p>
                 `,
                 task: "Write a function `avg(a, b)` that returns the average of two numbers. Call it with 10 and 20 and print the result.",
                 expectedOutput: "15.0",
@@ -412,27 +315,10 @@ print(a) # Output: Hello harry</code></pre>
                 description: "Read and write files using Python.",
                 theory: `
                     <h3 class="text-xl font-bold text-white mt-4">File I/O</h3>
-                    <p>RAM is volatile; to persist data, we use files. Python has functions for reading, updating, and deleting files.</p>
-                    
-                    <h3 class="text-xl font-bold text-white mt-6">Opening & Reading</h3>
-                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>f = open("this.txt", "r")
-text = f.read()
-print(text)
-f.close()</code></pre>
-                    <p>Other methods: <code>f.readline()</code>.</p>
-
-                    <h3 class="text-xl font-bold text-white mt-6">Modes of Opening</h3>
-                    <ul class="list-disc pl-5 mt-2 space-y-1">
-                        <li><code>r</code> - Read</li>
-                        <li><code>w</code> - Write (overwrites)</li>
-                        <li><code>a</code> - Append (adds to end)</li>
-                        <li><code>+</code> - Update</li>
-                    </ul>
-
-                    <h3 class="text-xl font-bold text-white mt-6">With Statement</h3>
-                    <p>The best way to open and close automatically.</p>
-                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>with open("this.txt", "r") as f:
-    text = f.read()</code></pre>
+                    <p>RAM is volatile; to persist data, we use files.</p>
+                    <p><strong>Opening & Reading:</strong> <code>f = open("this.txt", "r")</code>, <code>f.read()</code>, <code>f.close()</code>.</p>
+                    <p><strong>Modes:</strong> <code>r</code> (Read), <code>w</code> (Write), <code>a</code> (Append), <code>+</code> (Update).</p>
+                    <p><strong>With Statement:</strong> <code>with open("this.txt", "r") as f:</code> automatically closes the file.</p>
                 `,
                 task: "Since file systems are sandboxed in browsers, write a script that just prints 'File Read Successful' to simulate a successful read operation.",
                 expectedOutput: "File Read Successful",
@@ -444,31 +330,13 @@ f.close()</code></pre>
                 description: "Learn classes, objects, attributes, and methods.",
                 theory: `
                     <h3 class="text-xl font-bold text-white mt-4">OOP</h3>
-                    <p>Solving a problem by creating objects. Focuses on reusable code (DRY Principle).</p>
-                    
-                    <h3 class="text-xl font-bold text-white mt-6">Class & Object</h3>
-                    <p>A class is a blueprint. An object is an instantiation of a class.</p>
-                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>class Employee:
-    company = "Google" # Class attribute
-
-harry = Employee() # Object instantiation
-print(harry.company)</code></pre>
-
-                    <h3 class="text-xl font-bold text-white mt-6">Self Parameter & __init__</h3>
-                    <p><code>self</code> refers to the instance. <code>__init__</code> is a constructor run automatically on object creation.</p>
-                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>class Employee:
-    def __init__(self, name):
-        self.name = name
-
-harry = Employee("Harry")
-print(harry.name)</code></pre>
-
-                    <h3 class="text-xl font-bold text-white mt-6">Static Method</h3>
-                    <p>Use <code>@staticmethod</code> for functions that don't use the self parameter.</p>
+                    <p><strong>Class:</strong> A blueprint. <strong>Object:</strong> An instantiation of a class.</p>
+                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>class Employee:\n    def __init__(self, name):\n        self.name = name\n\nharry = Employee("Harry")\nprint(harry.name)</code></pre>
+                    <p><strong>Static Method:</strong> Use <code>@staticmethod</code> for functions that don't use the self parameter.</p>
                 `,
                 task: "Create a class 'Calculator' with a method 'square(self, n)' that returns the square of n. Instantiate it and print the square of 5.",
                 expectedOutput: "25",
-                starterCode: "class Calculator:\n    def square(self, n):\n        # return square\n        return n * n\n\ncalc = Calculator()\nprint(calc.square(5))"
+                starterCode: "class Calculator:\n    def square(self, n):\n        return n * n\n\ncalc = Calculator()\nprint(calc.square(5))"
             },
             {
                 id: "ch11",
@@ -477,28 +345,13 @@ print(harry.name)</code></pre>
                 theory: `
                     <h3 class="text-xl font-bold text-white mt-4">Inheritance</h3>
                     <p>Creating a new class from an existing class.</p>
-                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>class Employee:
-    pass
-
-class Programmer(Employee):
-    pass</code></pre>
-                    
-                    <h3 class="text-xl font-bold text-white mt-6">Types of Inheritance</h3>
-                    <ul class="list-disc pl-5 mt-2 space-y-1">
-                        <li><strong>Single:</strong> Child inherits one parent.</li>
-                        <li><strong>Multiple:</strong> Child inherits multiple parents.</li>
-                        <li><strong>Multilevel:</strong> Child becomes a parent for another child.</li>
-                    </ul>
-
-                    <h3 class="text-xl font-bold text-white mt-6">super() & Class Methods</h3>
-                    <p><code>super()</code> accesses methods of the superclass. <code>@classmethod</code> binds to the class, not the object.</p>
-
-                    <h3 class="text-xl font-bold text-white mt-6">Properties & Operator Overloading</h3>
-                    <p><code>@property</code> makes a method act like an attribute. Dunder methods like <code>__add__</code> overload operators.</p>
+                    <p><strong>Types:</strong> Single (one parent), Multiple (multiple parents), Multilevel (child becomes parent).</p>
+                    <p><strong>super():</strong> Accesses methods of the superclass. <strong>@classmethod:</strong> Binds to the class, not the object.</p>
+                    <p><strong>Operator Overloading:</strong> Dunder methods like <code>__add__</code> overload operators.</p>
                 `,
                 task: "Create a class 'Animal' with a method 'sound'. Create a subclass 'Dog' that inherits from Animal and overrides 'sound' to print 'Bark'.",
                 expectedOutput: "Bark",
-                starterCode: "class Animal:\n    def sound(self):\n        print('Some sound')\n\nclass Dog(Animal):\n    def sound(self):\n        # Override here\n        print('Bark')\n\nd = Dog()\nd.sound()"
+                starterCode: "class Animal:\n    def sound(self):\n        print('Some sound')\n\nclass Dog(Animal):\n    def sound(self):\n        print('Bark')\n\nd = Dog()\nd.sound()"
             },
             {
                 id: "ch12",
@@ -507,22 +360,17 @@ class Programmer(Employee):
                 theory: `
                     <h3 class="text-xl font-bold text-white mt-4">Exception Handling</h3>
                     <p>Use <code>try</code> and <code>except</code> to catch errors.</p>
-                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>try:
-    a = int("hello")
-except Exception as e:
-    print("An error occurred")</code></pre>
-
                     <h3 class="text-xl font-bold text-white mt-6">Advanced Features</h3>
                     <ul class="list-disc pl-5 mt-2 space-y-1">
                         <li><strong>Walrus Operator (:=):</strong> Assign and evaluate in one line.</li>
-                        <li><strong>Match Case:</strong> Python's version of a switch statement.</li>
-                        <li><strong>List Comprehensions:</strong> Elegant way to create lists. <code>[i for i in range(5) if i % 2 == 0]</code>.</li>
-                        <li><strong>Enumerate:</strong> Loop with an index. <code>for i, item in enumerate(list1):</code>.</li>
+                        <li><strong>Match Case:</strong> Python's switch statement.</li>
+                        <li><strong>List Comprehensions:</strong> <code>[i for i in range(5) if i % 2 == 0]</code>.</li>
+                        <li><strong>Enumerate:</strong> <code>for i, item in enumerate(list1):</code>.</li>
                     </ul>
                 `,
                 task: "Use a try-except block to catch a ZeroDivisionError. Write `print(10 / 0)` inside try, and print 'Error caught' inside except.",
                 expectedOutput: "Error caught",
-                starterCode: "try:\n    # Write division by zero here\n    print(10 / 0)\nexcept ZeroDivisionError:\n    print('Error caught')"
+                starterCode: "try:\n    print(10 / 0)\nexcept ZeroDivisionError:\n    print('Error caught')"
             },
             {
                 id: "ch13",
@@ -530,17 +378,13 @@ except Exception as e:
                 description: "Lambda, Map, Filter, Reduce, and formatting.",
                 theory: `
                     <h3 class="text-xl font-bold text-white mt-4">Lambda Functions</h3>
-                    <p>Anonymous functions created in one line. <code>square = lambda x: x*x</code>.</p>
-                    
+                    <p>Anonymous functions: <code>square = lambda x: x*x</code>.</p>
                     <h3 class="text-xl font-bold text-white mt-6">Map, Filter, Reduce</h3>
                     <ul class="list-disc pl-5 mt-2 space-y-1">
-                        <li><strong>Map:</strong> Applies a function to all items. <code>list(map(lambda x: x*2, [1,2]))</code></li>
-                        <li><strong>Filter:</strong> Creates a list of items that return True. <code>list(filter(lambda x: x>2, [1,2,3]))</code></li>
-                        <li><strong>Reduce:</strong> Applies a rolling computation. <code>from functools import reduce</code>.</li>
+                        <li><strong>Map:</strong> Applies function to all items.</li>
+                        <li><strong>Filter:</strong> Items that return True.</li>
+                        <li><strong>Reduce:</strong> Rolling computation.</li>
                     </ul>
-
-                    <h3 class="text-xl font-bold text-white mt-6">String Formatting</h3>
-                    <p><code>join()</code> and <code>format()</code> methods. E.g., <code>"{} is a good {}".format("harry", "boy")</code>.</p>
                 `,
                 task: "Use a lambda function combined with map() to double every number in the list [1, 2, 3]. Convert the result to a list and print it.",
                 expectedOutput: "[2, 4, 6]",
@@ -553,11 +397,11 @@ except Exception as e:
                 theory: `
                     <h3 class="text-xl font-bold text-white mt-4">Snake, Water, Gun</h3>
                     <p>Rules: Snake drinks Water (Snake wins). Water drowns Gun (Water wins). Gun kills Snake (Gun wins).</p>
-                    <p>Use the <code>random.choice()</code> module to let the computer make a choice.</p>
+                    <p>Use <code>random.choice()</code> for computer choices.</p>
                 `,
                 task: "Simulate a game where computer picks 'Snake' and you pick 'Water'. Print who wins.",
                 expectedOutput: "Computer Wins",
-                starterCode: "comp = 'Snake'\nyou = 'Water'\n# Determine winner and print 'Computer Wins'\nprint('Computer Wins')"
+                starterCode: "comp = 'Snake'\nyou = 'Water'\n# Determine winner and print\nprint('Computer Wins')"
             },
             {
                 id: "proj2",
@@ -565,35 +409,108 @@ except Exception as e:
                 description: "Build a number guessing game.",
                 theory: `
                     <h3 class="text-xl font-bold text-white mt-4">The Perfect Guess</h3>
-                    <p>Generate a random number. Ask the user to guess it. If they guess higher, print "Lower number please". If lower, print "Higher number please". Count the number of guesses.</p>
-                    <p>Since Skulpt doesn't easily support multiple inputs in this environment, we will simulate it.</p>
+                    <p>Generate a random number. Ask the user to guess it. If they guess higher, print "Lower number please". If lower, print "Higher number please".</p>
                 `,
                 task: "Assume the target number is 50. You guessed 40. Print 'Higher number please'.",
                 expectedOutput: "Higher number please",
-                starterCode: "target = 50\nguess = 40\n# Write your logic here\nprint('Higher number please')"
+                starterCode: "target = 50\nguess = 40\nprint('Higher number please')"
             }
         ];
 
         // ============================================================================
-        // 2. STATE MANAGEMENT & INITIALIZATION
+        // STATE & INITIALIZATION
         // ============================================================================
-
+        let pyodide = null;
         let currentChapterIndex = 0;
         let editor;
         let completedChapters = JSON.parse(localStorage.getItem('pythonUltimateProgress')) || [];
+        let isPyodideReady = false;
 
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             initParticles();
             initEditor();
-            setupSkulpt();
             renderSidebar();
             loadChapter(0);
+            await initializePyodide();
         });
 
-        // ============================================================================
-        // 3. GRAPHICS & UI INITIALIZATION
-        // ============================================================================
+        async function initializePyodide() {
+            const consoleDiv = document.getElementById("console");
+            const submitBtn = document.getElementById("submit-btn");
+            const runBtn = document.getElementById("run-btn");
 
+            consoleDiv.innerHTML = "> Loading Pyodide (Python runtime)...\n> This may take a few seconds on first load.";
+
+            try {
+                pyodide = await loadPyodide({
+                    indexURL: "https://cdn.jsdelivr.net/pyodide/v0.27.4/full/"
+                });
+
+                // Redirect stdout to our console
+                pyodide.setStdout({
+                    batched: (str) => {
+                        appendToConsole(str);
+                        window._pyOutput = (window._pyOutput || "") + str;
+                    }
+                });
+
+                // Redirect stderr (errors) to our console
+                pyodide.setStderr({
+                    batched: (str) => {
+                        appendToConsole(str);
+                        window._pyOutput = (window._pyOutput || "") + str;
+                    }
+                });
+
+                // Enable input() via browser prompt
+                pyodide.setStdin({
+                    stdin: () => prompt("Python input() requested:")
+                });
+
+                isPyodideReady = true;
+                consoleDiv.innerHTML = "> Python environment ready! Write your code and click Run.";
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Validate & Complete Chapter`;
+                runBtn.disabled = false;
+
+            } catch (error) {
+                consoleDiv.innerHTML = `> Error loading Pyodide: ${error.message}\n> Please refresh the page.`;
+                appendToConsole(`\n[Load Error]: ${error.message}`);
+                submitBtn.innerHTML = "Pyodide Load Failed";
+                runBtn.disabled = true;
+            }
+        }
+
+        // ============================================================================
+        // PYODIDE EXECUTION
+        // ============================================================================
+        async function runPythonCode() {
+            if (!isPyodideReady) {
+                appendToConsole("\n[Warning]: Python environment is still loading. Please wait.");
+                return "";
+            }
+
+            const code = editor.getValue();
+            window._pyOutput = "";
+
+            clearConsole();
+            appendToConsole("> Executing main.py...\n");
+
+            try {
+                // Run the Python code using Pyodide's async runner
+                await pyodide.runPythonAsync(code);
+            } catch (err) {
+                // Pyodide errors are already sent to stderr, but we catch to avoid unhandled rejections
+                appendToConsole(`\n[Python Error]: ${err.message}`);
+                window._pyOutput += `[Python Error]: ${err.message}`;
+            }
+
+            return window._pyOutput || "";
+        }
+
+        // ============================================================================
+        // UI RENDERING
+        // ============================================================================
         function initParticles() {
             particlesJS("particles-js", {
                 "particles": {
@@ -621,51 +538,28 @@ except Exception as e:
                 lineNumbers: true,
                 indentUnit: 4,
                 autoCloseBrackets: true,
-                matchBrackets: true,
-                extraKeys: {"Ctrl-Space": "autocomplete"}
+                matchBrackets: true
             });
         }
-
-        function setupSkulpt() {
-            function builtinRead(x) {
-                if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
-                    throw "File not found: '" + x + "'";
-                return Sk.builtinFiles["files"][x];
-            }
-            
-            Sk.configure({ 
-                read: builtinRead,
-                __future__: Sk.python3,
-                // Enable input() support via browser prompt
-                inputfun: function (prompt) {
-                    return window.prompt(prompt);
-                },
-                inputfunTakesPrompt: true
-            });
-        }
-
-        // ============================================================================
-        // 4. CORE LOGIC & RENDERING
-        // ============================================================================
 
         function renderSidebar() {
             const nav = document.getElementById("sidebar-nav");
             nav.innerHTML = "";
-            
+
             curriculum.forEach((chapter, index) => {
                 const isCompleted = completedChapters.includes(chapter.id);
                 const isUnlocked = index === 0 || completedChapters.includes(curriculum[index - 1].id);
-                
+
                 const btn = document.createElement("button");
                 btn.className = `w-full text-left px-4 py-3 rounded-lg transition-all duration-200 flex justify-between items-center group ${
                     index === currentChapterIndex ? 'active-chapter' : 'hover:bg-slate-800 text-slate-400'
                 } ${!isUnlocked ? 'locked' : ''}`;
-                
+
                 btn.innerHTML = `
                     <span class="truncate pr-2">${chapter.title}</span>
                     ${isCompleted ? '<span class="text-green-500">✓</span>' : (isUnlocked ? '<span class="text-slate-600 group-hover:text-slate-400">→</span>' : '<span class="text-slate-600">🔒</span>')}
                 `;
-                
+
                 if (isUnlocked) {
                     btn.onclick = () => loadChapter(index);
                 }
@@ -680,24 +574,22 @@ except Exception as e:
         function loadChapter(index) {
             currentChapterIndex = index;
             const chapter = curriculum[index];
-            
+
             document.getElementById("lesson-title").innerText = chapter.title;
             document.getElementById("lesson-description").innerText = chapter.description;
             document.getElementById("chapter-badge").innerText = `CH ${index}`;
             document.getElementById("theory-content").innerHTML = chapter.theory;
             document.getElementById("task-description").innerText = chapter.task;
-            
             document.getElementById("expected-output-display").innerText = chapter.expectedOutput.replace(/\n/g, '\\n');
 
             editor.setValue(chapter.starterCode);
-            
+
             clearConsole();
-            appendToConsole("> Environment loaded. Ready to run.");
-            
+            if (isPyodideReady) {
+                appendToConsole("> Environment ready. Write your code and click Run.");
+            }
+
             const submitBtn = document.getElementById("submit-btn");
-            submitBtn.disabled = false;
-            
-            // Reset button styling
             if (completedChapters.includes(chapter.id)) {
                 submitBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Already Completed`;
                 submitBtn.className = "mt-4 bg-green-700 text-white px-4 py-2.5 rounded-lg font-bold shadow-lg flex justify-center items-center gap-2 cursor-default";
@@ -708,15 +600,11 @@ except Exception as e:
 
             const theoryPanel = document.getElementById('theory-panel');
             theoryPanel.classList.remove('fade-in');
-            void theoryPanel.offsetWidth; // trigger reflow
+            void theoryPanel.offsetWidth;
             theoryPanel.classList.add('fade-in');
 
             renderSidebar();
         }
-
-        // ============================================================================
-        // 5. PYTHON EXECUTION (SKULPT)
-        // ============================================================================
 
         function appendToConsole(text) {
             const consoleDiv = document.getElementById("console");
@@ -728,46 +616,12 @@ except Exception as e:
             document.getElementById("console").innerHTML = "";
         }
 
-        // Promise-based execution to ensure output is fully captured
-        function runPythonCode() {
-            return new Promise((resolve, reject) => {
-                const code = editor.getValue();
-                let outputText = "";
-                
-                clearConsole();
-                appendToConsole("> Executing main.py...\n");
-
-                function outf(text) {
-                    outputText += text;
-                    appendToConsole(text);
-                }
-
-                Sk.configure({ output: outf });
-
-                try {
-                    Sk.misceval.asyncToPromise(function() {
-                        return Sk.importMainWithBody("<stdin>", false, code, true);
-                    }).then(() => {
-                        resolve(outputText);
-                    }).catch((err) => {
-                        appendToConsole(`\n[Error]: ${err.toString()}`);
-                        outputText += `[Error]: ${err.toString()}`;
-                        resolve(outputText); // Resolve so validation can process the error text
-                    });
-                } catch (e) {
-                    appendToConsole(`\n[Error]: ${e.toString()}`);
-                    outputText += `[Error]: ${e.toString()}`;
-                    resolve(outputText);
-                }
-            });
-        }
-
         // ============================================================================
-        // 6. EVENT LISTENERS
+        // EVENT LISTENERS
         // ============================================================================
-
-        document.getElementById("run-btn").addEventListener("click", () => {
-            runPythonCode();
+        document.getElementById("run-btn").addEventListener("click", async () => {
+            if (!isPyodideReady) return;
+            await runPythonCode();
         });
 
         document.getElementById("clear-console").addEventListener("click", () => {
@@ -775,24 +629,27 @@ except Exception as e:
         });
 
         document.getElementById("submit-btn").addEventListener("click", async () => {
+            if (!isPyodideReady) {
+                appendToConsole("\n[Warning]: Please wait for the Python environment to finish loading.");
+                return;
+            }
+
             const chapter = curriculum[currentChapterIndex];
-            
-            // Wait for Python code to complete
             const output = await runPythonCode();
-            
+
             const cleanOutput = output.trim().replace(/\r\n/g, '\n');
             const expected = chapter.expectedOutput.trim().replace(/\r\n/g, '\n');
 
             if (cleanOutput === expected) {
                 appendToConsole("\n\n✅ SUCCESS! Output matches expected result.");
-                
+
                 if (!completedChapters.includes(chapter.id)) {
                     completedChapters.push(chapter.id);
                     localStorage.setItem('pythonUltimateProgress', JSON.stringify(completedChapters));
                 }
-                
+
                 renderSidebar();
-                
+
                 if (currentChapterIndex + 1 < curriculum.length) {
                     setTimeout(() => {
                         alert("🎉 Correct! Chapter completed. Moving to next chapter.");
@@ -803,7 +660,6 @@ except Exception as e:
                         alert("🏆 CONGRATULATIONS! You have completed the entire Ultimate Python Handbook!");
                     }, 500);
                 }
-
             } else {
                 appendToConsole("\n\n❌ ERROR: Output does not match the expected result. Try again!");
                 appendToConsole(`\nExpected: "${expected}"`);
@@ -812,7 +668,7 @@ except Exception as e:
         });
 
         document.getElementById("reset-btn").addEventListener("click", () => {
-            if (confirm("Are you sure you want to reset all your progress? This cannot be undone.")) {
+            if (confirm("Are you sure you want to reset all your progress?")) {
                 completedChapters = [];
                 localStorage.removeItem('pythonUltimateProgress');
                 loadChapter(0);
