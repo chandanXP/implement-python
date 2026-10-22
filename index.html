@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Python Interactive Handbook</title>
+    <title>Ultimate Interactive Python Handbook</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/matchbrackets.min.js"></script>
 
     <!-- Skulpt (Python in the browser) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt.min.js"></script>
@@ -21,14 +23,69 @@
     <!-- Particles.js (Background Graphics) -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
-    <!-- Custom Styles -->
+    <!-- Custom Styles and Animations -->
     <style>
-        body { background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        #particles-js { position: fixed; width: 100%; height: 100%; z-index: -1; }
-        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .CodeMirror { height: 300px; border-radius: 0.5rem; font-size: 16px; }
-        .locked { opacity: 0.5; cursor: not-allowed; }
-        .console-output { font-family: monospace; background: #1e1e1e; color: #4ade80; min-height: 100px; padding: 10px; border-radius: 0.5rem; overflow-y: auto;}
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;800&display=swap');
+        
+        body { 
+            background-color: #0f172a; 
+            color: #f8fafc; 
+            font-family: 'Inter', sans-serif; 
+            margin: 0;
+            padding: 0;
+            overflow: hidden; 
+        }
+
+        h1, h2, h3 { font-weight: 800; }
+        code { font-family: 'Fira Code', monospace; background: #1e293b; padding: 0.2rem 0.4rem; border-radius: 0.25rem; color: #38bdf8; }
+        
+        #particles-js { 
+            position: fixed; 
+            width: 100%; 
+            height: 100%; 
+            z-index: -1; 
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        }
+
+        .glass-panel { 
+            background: rgba(30, 41, 59, 0.75); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .CodeMirror { 
+            height: 350px; 
+            border-radius: 0.5rem; 
+            font-size: 15px; 
+            font-family: 'Fira Code', monospace;
+            border: 1px solid #334155;
+        }
+
+        .locked { opacity: 0.4; cursor: not-allowed; filter: grayscale(100%); pointer-events: none; }
+        .active-chapter { background: rgba(56, 189, 248, 0.15); border-left: 4px solid #38bdf8; color: #38bdf8; font-weight: 600; }
+        
+        .console-output { 
+            font-family: 'Fira Code', monospace; 
+            background: #000000; 
+            color: #4ade80; 
+            min-height: 120px; 
+            padding: 15px; 
+            border-radius: 0.5rem; 
+            overflow-y: auto; 
+            border: 1px solid #334155;
+            white-space: pre-wrap;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
     </style>
 </head>
 <body class="h-screen flex overflow-hidden">
@@ -36,105 +93,496 @@
     <!-- Background Graphics -->
     <div id="particles-js"></div>
 
-    <!-- Sidebar -->
-    <aside class="w-1/4 glass-panel h-full p-6 overflow-y-auto border-r border-slate-700 z-10 flex flex-col">
-        <h1 class="text-2xl font-bold text-cyan-400 mb-6 border-b border-slate-700 pb-2">Python Handbook</h1>
-        <nav id="sidebar-nav" class="flex-grow space-y-2">
-            <!-- Navigation will be injected here by JS -->
+    <!-- Sidebar Navigation -->
+    <aside class="w-1/4 glass-panel h-full p-6 overflow-y-auto z-10 flex flex-col border-r border-slate-700">
+        <div class="mb-8 flex items-center gap-3">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python" class="w-8 h-8">
+            <h1 class="text-xl font-bold text-white tracking-wide">Ultimate Handbook</h1>
+        </div>
+        
+        <nav id="sidebar-nav" class="flex-grow space-y-2 text-sm">
+            <!-- Navigation injected via JS -->
         </nav>
-        <div class="mt-4 pt-4 border-t border-slate-700 text-sm text-slate-400">
-            Progress: <span id="progress-text">0%</span>
+        
+        <div class="mt-6 pt-6 border-t border-slate-700">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs text-slate-400 uppercase tracking-wider font-bold">Your Progress</span>
+                <span id="progress-text" class="text-xs font-bold text-cyan-400">0%</span>
+            </div>
+            <div class="w-full bg-slate-700 rounded-full h-2.5">
+                <div id="progress-bar" class="bg-cyan-400 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <button id="reset-btn" class="mt-4 text-xs text-red-400 hover:text-red-300 transition-colors w-full text-left">Reset Progress</button>
         </div>
     </aside>
 
-    <!-- Main Content -->
+    <!-- Main Application Area -->
     <main class="w-3/4 h-full p-8 overflow-y-auto z-10 flex flex-col">
         
         <!-- Header -->
-        <header class="mb-6">
-            <h2 id="lesson-title" class="text-3xl font-bold text-white mb-2">Welcome</h2>
-            <p id="lesson-description" class="text-slate-300">Select a chapter to begin your journey.</p>
+        <header class="mb-6 flex justify-between items-end border-b border-slate-700 pb-4">
+            <div>
+                <h2 id="lesson-title" class="text-3xl font-bold text-white mb-2">Loading...</h2>
+                <p id="lesson-description" class="text-slate-400 text-sm">Please wait while the environment initializes.</p>
+            </div>
+            <div class="text-right">
+                <span id="chapter-badge" class="bg-slate-800 text-cyan-400 text-xs px-3 py-1 rounded-full border border-cyan-900 font-bold">CH 0</span>
+            </div>
         </header>
 
-        <!-- Split View: Theory vs Editor -->
-        <div class="flex flex-col lg:flex-row gap-6 flex-grow">
+        <!-- Split View -->
+        <div class="flex flex-col xl:flex-row gap-6 flex-grow">
             
-            <!-- Theory & Task Section -->
-            <div class="w-full lg:w-1/2 glass-panel p-6 rounded-xl overflow-y-auto">
-                <div id="theory-content" class="prose prose-invert max-w-none mb-6">
-                    <p>Welcome to the Ultimate Python Handbook.</p>
+            <!-- Left Column: Theory & Tasks -->
+            <div class="w-full xl:w-5/12 glass-panel p-6 rounded-xl overflow-y-auto flex flex-col fade-in" id="theory-panel">
+                <div id="theory-content" class="prose prose-invert max-w-none text-slate-300 text-sm leading-relaxed mb-8">
+                    <!-- Injected HTML goes here -->
                 </div>
-                <div class="mt-6 border-t border-slate-600 pt-4">
-                    <h3 class="text-xl font-bold text-yellow-400 mb-2">Your Task</h3>
-                    <p id="task-description" class="text-sm text-slate-300"></p>
+                
+                <div class="mt-auto bg-slate-800 p-4 rounded-lg border border-slate-600">
+                    <div class="flex items-center gap-2 mb-2">
+                        <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <h3 class="text-md font-bold text-yellow-400">Current Task</h3>
+                    </div>
+                    <p id="task-description" class="text-sm text-slate-300 font-medium"></p>
+                    <div class="mt-2 text-xs text-slate-500">
+                        Expected Output: <code id="expected-output-display" class="text-green-400"></code>
+                    </div>
                 </div>
             </div>
 
-            <!-- Interactive Code Editor Section -->
-            <div class="w-full lg:w-1/2 flex flex-col gap-4">
-                <div class="glass-panel p-4 rounded-xl">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm font-bold text-cyan-400">main.py</span>
-                        <button id="run-btn" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1 rounded text-sm transition">Run Code</button>
+            <!-- Right Column: Code Editor & Console -->
+            <div class="w-full xl:w-7/12 flex flex-col gap-6">
+                
+                <!-- Editor -->
+                <div class="glass-panel p-4 rounded-xl flex-grow">
+                    <div class="flex justify-between items-center mb-3">
+                        <div class="flex gap-2">
+                            <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                            <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                            <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                            <span class="text-xs text-slate-400 ml-2 font-mono">main.py</span>
+                        </div>
+                        <button id="run-btn" class="bg-slate-700 hover:bg-slate-600 text-cyan-400 px-4 py-1.5 rounded text-sm font-bold transition flex items-center gap-2 border border-slate-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Run Code
+                        </button>
                     </div>
                     <textarea id="code-editor"></textarea>
                 </div>
 
-                <!-- Console Output -->
-                <div class="glass-panel p-4 rounded-xl flex-grow flex flex-col">
-                    <span class="text-sm font-bold text-slate-400 mb-2">Console Output</span>
-                    <div id="console" class="console-output flex-grow"></div>
+                <!-- Console -->
+                <div class="glass-panel p-4 rounded-xl h-64 flex flex-col">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Terminal Output</span>
+                        <button id="clear-console" class="text-xs text-slate-500 hover:text-slate-300">Clear</button>
+                    </div>
+                    <div id="console" class="console-output flex-grow font-mono text-sm">> Ready for execution...</div>
                     
-                    <button id="submit-btn" class="mt-4 bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded font-bold transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>Submit Task</button>
+                    <button id="submit-btn" class="mt-4 bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2.5 rounded-lg font-bold transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-cyan-900/50 flex justify-center items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Validate & Complete Chapter
+                    </button>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Application Logic -->
+    <!-- Application Logic Script -->
     <script>
-        // --- 1. CURRICULUM DATA ---
-        // You can extend this object to include all 13 chapters based on the PDF.
+        // ============================================================================
+        // 1. CURRICULUM DATA (Based on "The Ultimate Python Handbook" PDF)
+        // ============================================================================
+        
         const curriculum = [
             {
                 id: "ch1",
                 title: "Ch 1: Modules, Comments & pip",
+                description: "Learn the basics of Python, how to write comments, and use modules.",
                 theory: `
-                    <h3 class="text-xl font-bold">Modules</h3>
-                    <p>A module is a file containing code written by somebody else which can be imported and used in our programs.</p>
-                    <h3 class="text-xl font-bold mt-4">pip</h3>
-                    <p>Pip is the package manager for python. You can use pip to install a module on your system.</p>
-                    <h3 class="text-xl font-bold mt-4">Comments</h3>
-                    <p>Comments are used to write something which the programmer does not want to execute. Single line comments start with <code>#</code>. Multiline comments use triple quotes <code>"""</code>.</p>
+                    <h3 class="text-xl font-bold text-white mt-4">What is Programming?</h3>
+                    <p>Just like we use Hindi or English to communicate with each other, we use a programming language like Python to communicate with the computer. Programming is a way to instruct the computer to perform various tasks.</p>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">What is Python?</h3>
+                    <p>Python is a simple and easy-to-understand language which feels like reading simple English. This pseudo-code nature is easy to learn and understandable by beginners.</p>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">Modules & pip</h3>
+                    <p>A <strong>module</strong> is a file containing code written by somebody else (usually) which can be imported and used in our programs. <strong>pip</strong> is the package manager for python. You can use pip to install an external module on your system (e.g., <code>pip install flask</code>).</p>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">Comments</h3>
+                    <p>Comments are used to write something which the programmer does not want to execute. This can be used to mark the author's name, date, etc.</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li><strong>Single Line Comments:</strong> Start with a <code>#</code>.</li>
+                        <li><strong>Multiline Comments:</strong> Use triple quotes <code>"""</code> or <code>'''</code>.</li>
+                    </ul>
                 `,
-                task: "Write a Python program that prints 'Hello World' and includes a single-line comment above it explaining what the code does.",
-                expectedOutput: "Hello World\n", // What the code must output to pass
+                task: "Write a Python program to print 'Hello World' and include a single-line comment above it explaining what the code does.",
+                expectedOutput: "Hello World",
                 starterCode: "# Write your comment here\nprint('Hello World')"
             },
             {
                 id: "ch2",
                 title: "Ch 2: Variables & Data Types",
+                description: "Master variables, data types, operators, and user input.",
                 theory: `
-                    <h3 class="text-xl font-bold">Variables</h3>
-                    <p>A variable is the name given to a memory location in a program. E.g., <code>a = 30</code></p>
-                    <h3 class="text-xl font-bold mt-4">Data Types</h3>
-                    <p>Primarily: Integers (int), Floating point numbers (float), Strings (str), Booleans (bool), and None.</p>
-                    <h3 class="text-xl font-bold mt-4">Input() Function</h3>
-                    <p>This function allows the user to take input from the keyboard as a string. E.g., <code>a = input("Enter name: ")</code></p>
+                    <h3 class="text-xl font-bold text-white mt-4">Variables</h3>
+                    <p>A variable is the name given to a memory location in a program. E.g., <code>a = 30</code>.</p>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">Data Types</h3>
+                    <p>Python automatically identifies the type of data. Primarily:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li>Integers (int) - e.g., <code>71</code></li>
+                        <li>Floating point numbers (float) - e.g., <code>88.44</code></li>
+                        <li>Strings (str) - e.g., <code>"harry"</code></li>
+                        <li>Booleans (bool) - <code>True</code> or <code>False</code></li>
+                        <li>None</li>
+                    </ul>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">Rules for Identifiers</h3>
+                    <p>A variable name can contain alphabets, digits, and underscores. It can only start with an alphabet or underscore. No whitespace allowed.</p>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">Operators</h3>
+                    <p>Arithmetic (+, -, *, /), Assignment (=, +=), Comparison (==, >=, <=), Logical (and, or, not).</p>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">Type Casting & Input</h3>
+                    <p><code>type()</code> checks the data type. <code>int()</code>, <code>float()</code>, <code>str()</code> convert types. <code>input()</code> takes input from the keyboard as a string.</p>
                 `,
-                task: "Write a program to add two numbers and find the remainder when they are divided. Print the result.",
-                expectedOutput: "Remainder is: 1\n", 
-                starterCode: "a = 10\nb = 3\n# Calculate remainder using modulus operator (%)\n"
+                task: "Write a program to take two numbers as input from the user, add them together, and print the result.",
+                expectedOutput: "30",
+                starterCode: "a = 10\nb = 20\n# Add them and print\nprint(a + b)"
             },
-            // Add Chapter 3, 4, 5... following the exact same structure.
+            {
+                id: "ch3",
+                title: "Ch 3: Strings",
+                description: "Explore string slicing, functions, and escape sequences.",
+                theory: `
+                    <h3 class="text-xl font-bold text-white mt-4">Strings</h3>
+                    <p>A string is a sequence of characters enclosed in quotes. They can be single, double, or triple quoted.</p>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">String Slicing</h3>
+                    <p>A string can be sliced to get a part of it. Syntax: <code>name[start:end]</code> (end is exclusive).</p>
+                    <p>Negative indices can also be used: <code>-1</code> is the last character, <code>-2</code> is the second last.</p>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">String Functions</h3>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li><code>len(str)</code> - Length of string</li>
+                        <li><code>str.endswith("rry")</code> - Checks suffix</li>
+                        <li><code>str.count("r")</code> - Counts occurrences</li>
+                        <li><code>str.capitalize()</code> - Capitalizes first letter</li>
+                        <li><code>str.find(word)</code> - Finds index of word</li>
+                        <li><code>str.replace(old, new)</code> - Replaces text</li>
+                    </ul>
+
+                    <h3 class="text-xl font-bold text-white mt-6">Escape Sequences</h3>
+                    <p>Sequence of characters after a backslash. Examples: <code>\\n</code> (newline), <code>\\t</code> (tab), <code>\\\\</code> (backslash).</p>
+                `,
+                task: "Write a program to slice the string 'harry' from index 1 to 4 (excluding 4) and print it.",
+                expectedOutput: "arr",
+                starterCode: "name = 'harry'\n# Slice and print\nprint(name[1:4])"
+            },
+            {
+                id: "ch4",
+                title: "Ch 4: Lists & Tuples",
+                description: "Learn about mutable lists and immutable tuples.",
+                theory: `
+                    <h3 class="text-xl font-bold text-white mt-4">Lists</h3>
+                    <p>Lists are containers to store a set of values of any data type. E.g., <code>friends = ["apple", "akash", 7, False]</code>. Lists are mutable (can be changed).</p>
+                    <p><strong>Methods:</strong> <code>l1.sort()</code>, <code>l1.reverse()</code>, <code>l1.append(8)</code>, <code>l1.insert(3, 8)</code>, <code>l1.pop(2)</code>, <code>l1.remove(21)</code>.</p>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">Tuples</h3>
+                    <p>A tuple is an immutable data type (cannot be changed). E.g., <code>a = (1, 7, 2)</code>. A tuple with a single element needs a comma: <code>a = (1,)</code>.</p>
+                    <p><strong>Methods:</strong> <code>a.count(1)</code>, <code>a.index(1)</code>.</p>
+                `,
+                task: "Create a list 'l1' with numbers [1, 8, 7, 2]. Sort the list and print it.",
+                expectedOutput: "[1, 2, 7, 8]",
+                starterCode: "l1 = [1, 8, 7, 2]\n# Sort and print\nl1.sort()\nprint(l1)"
+            },
+            {
+                id: "ch5",
+                title: "Ch 5: Dictionary & Sets",
+                description: "Discover key-value pairs and unique element collections.",
+                theory: `
+                    <h3 class="text-xl font-bold text-white mt-4">Dictionaries</h3>
+                    <p>A dictionary is a collection of key-value pairs. E.g., <code>a = {"name": "harry", "marks": 100}</code>.</p>
+                    <p><strong>Properties:</strong> Unordered, mutable, indexed, cannot contain duplicate keys.</p>
+                    <p><strong>Methods:</strong> <code>a.items()</code>, <code>a.keys()</code>, <code>a.update({"friend": "Rohan"})</code>, <code>a.get("name")</code>.</p>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">Sets</h3>
+                    <p>A set is a collection of non-repetitive elements. E.g., <code>s = {1, 2}</code> or <code>s = set()</code>.</p>
+                    <p><strong>Properties:</strong> Unordered, unindexed, cannot change items, cannot contain duplicates.</p>
+                    <p><strong>Operations:</strong> <code>s.add(1)</code>, <code>len(s)</code>, <code>s.remove(8)</code>, <code>s.pop()</code>, <code>s.clear()</code>, <code>s.union({8, 11})</code>, <code>s.intersection({8, 11})</code>.</p>
+                `,
+                task: "Create a set with values {1, 2, 3}. Add the number 4 to it and print the length of the set.",
+                expectedOutput: "4",
+                starterCode: "s = {1, 2, 3}\n# Add 4 and print length\ns.add(4)\nprint(len(s))"
+            },
+            {
+                id: "ch6",
+                title: "Ch 6: Conditional Expressions",
+                description: "Control the flow of your program with if, elif, and else.",
+                theory: `
+                    <h3 class="text-xl font-bold text-white mt-4">Conditionals</h3>
+                    <p>If-else and elif statements are a multiway decision taken by our program due to certain conditions in our code.</p>
+                    
+                    <p class="mt-2"><strong>Syntax:</strong></p>
+                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>if (condition1):
+    print("yes")
+elif (condition2):
+    print("no")
+else:
+    print("maybe")</code></pre>
+
+                    <p class="mt-4"><strong>Important notes:</strong></p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li>There can be any number of elif statements.</li>
+                        <li>The last else is executed only if all the conditions inside if/elifs fail.</li>
+                    </ul>
+                `,
+                task: "Write a program to check if a number is greater than 18. If yes, print 'Adult', else print 'Minor'. Use the variable `age = 22`.",
+                expectedOutput: "Adult",
+                starterCode: "age = 22\n# Write your if-else block here"
+            },
+            {
+                id: "ch7",
+                title: "Ch 7: Loops in Python",
+                description: "Iterate through data using while and for loops.",
+                theory: `
+                    <h3 class="text-xl font-bold text-white mt-4">Loops</h3>
+                    <p>Loops make it easy for a programmer to tell the computer which set of instructions to repeat and how!</p>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">While Loop</h3>
+                    <p>Executes a block of code as long as a condition remains True.</p>
+                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>i = 0
+while i < 5:
+    print("Harry")
+    i = i + 1</code></pre>
+
+                    <h3 class="text-xl font-bold text-white mt-6">For Loop</h3>
+                    <p>Used to iterate through a sequence like list, tuple, or string.</p>
+                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>for item in [1, 7, 8]:
+    print(item)</code></pre>
+
+                    <h3 class="text-xl font-bold text-white mt-6">Range Function</h3>
+                    <p><code>range(start, stop, step_size)</code> generates a sequence of numbers.</p>
+
+                    <h3 class="text-xl font-bold text-white mt-6">Control Statements</h3>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li><strong>break:</strong> Exit the loop immediately.</li>
+                        <li><strong>continue:</strong> Skip the current iteration and move to the next.</li>
+                        <li><strong>pass:</strong> Do nothing (null statement).</li>
+                    </ul>
+                `,
+                task: "Write a for loop to print the numbers 1 to 5 (inclusive) using the range() function.",
+                expectedOutput: "1\n2\n3\n4\n5",
+                starterCode: "# Write your for loop here\nfor i in range(1, 6):\n    print(i)"
+            },
+            {
+                id: "ch8",
+                title: "Ch 8: Functions & Recursions",
+                description: "Create reusable blocks of code and learn recursion.",
+                theory: `
+                    <h3 class="text-xl font-bold text-white mt-4">Functions</h3>
+                    <p>A function is a group of statements performing a specific task. It makes the program modular and reusable.</p>
+                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>def func1():
+    print('hello')
+
+func1() # Function call</code></pre>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">Functions with Arguments</h3>
+                    <p>A function can accept values (arguments) and return a value.</p>
+                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>def greet(name):
+    return "Hello " + name
+
+a = greet("harry")
+print(a) # Output: Hello harry</code></pre>
+
+                    <h3 class="text-xl font-bold text-white mt-6">Default Parameters</h3>
+                    <p>You can set a default value: <code>def greet(name="stranger"):</code>.</p>
+
+                    <h3 class="text-xl font-bold text-white mt-6">Recursion</h3>
+                    <p>Recursion is a function which calls itself. E.g., calculating factorial: <code>factorial(n) = n * factorial(n-1)</code>.</p>
+                `,
+                task: "Write a function `avg(a, b)` that returns the average of two numbers. Call it with 10 and 20 and print the result.",
+                expectedOutput: "15.0",
+                starterCode: "def avg(a, b):\n    # return average\n    return (a + b) / 2\n\nprint(avg(10, 20))"
+            },
+            {
+                id: "ch9",
+                title: "Ch 9: File I/O",
+                description: "Read and write files using Python.",
+                theory: `
+                    <h3 class="text-xl font-bold text-white mt-4">File I/O</h3>
+                    <p>RAM is volatile; to persist data, we use files. Python has functions for reading, updating, and deleting files.</p>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">Opening & Reading</h3>
+                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>f = open("this.txt", "r")
+text = f.read()
+print(text)
+f.close()</code></pre>
+                    <p>Other methods: <code>f.readline()</code>.</p>
+
+                    <h3 class="text-xl font-bold text-white mt-6">Modes of Opening</h3>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li><code>r</code> - Read</li>
+                        <li><code>w</code> - Write (overwrites)</li>
+                        <li><code>a</code> - Append (adds to end)</li>
+                        <li><code>+</code> - Update</li>
+                    </ul>
+
+                    <h3 class="text-xl font-bold text-white mt-6">With Statement</h3>
+                    <p>The best way to open and close automatically.</p>
+                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>with open("this.txt", "r") as f:
+    text = f.read()</code></pre>
+                `,
+                task: "Since file systems are sandboxed in browsers, write a script that just prints 'File Read Successful' to simulate a successful read operation.",
+                expectedOutput: "File Read Successful",
+                starterCode: "# Simulate file read\nprint('File Read Successful')"
+            },
+            {
+                id: "ch10",
+                title: "Ch 10: Object Oriented Programming",
+                description: "Learn classes, objects, attributes, and methods.",
+                theory: `
+                    <h3 class="text-xl font-bold text-white mt-4">OOP</h3>
+                    <p>Solving a problem by creating objects. Focuses on reusable code (DRY Principle).</p>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">Class & Object</h3>
+                    <p>A class is a blueprint. An object is an instantiation of a class.</p>
+                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>class Employee:
+    company = "Google" # Class attribute
+
+harry = Employee() # Object instantiation
+print(harry.company)</code></pre>
+
+                    <h3 class="text-xl font-bold text-white mt-6">Self Parameter & __init__</h3>
+                    <p><code>self</code> refers to the instance. <code>__init__</code> is a constructor run automatically on object creation.</p>
+                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>class Employee:
+    def __init__(self, name):
+        self.name = name
+
+harry = Employee("Harry")
+print(harry.name)</code></pre>
+
+                    <h3 class="text-xl font-bold text-white mt-6">Static Method</h3>
+                    <p>Use <code>@staticmethod</code> for functions that don't use the self parameter.</p>
+                `,
+                task: "Create a class 'Calculator' with a method 'square(self, n)' that returns the square of n. Instantiate it and print the square of 5.",
+                expectedOutput: "25",
+                starterCode: "class Calculator:\n    def square(self, n):\n        # return square\n        return n * n\n\ncalc = Calculator()\nprint(calc.square(5))"
+            },
+            {
+                id: "ch11",
+                title: "Ch 11: Inheritance & more OOPs",
+                description: "Build upon classes using inheritance and magic methods.",
+                theory: `
+                    <h3 class="text-xl font-bold text-white mt-4">Inheritance</h3>
+                    <p>Creating a new class from an existing class.</p>
+                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>class Employee:
+    pass
+
+class Programmer(Employee):
+    pass</code></pre>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">Types of Inheritance</h3>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li><strong>Single:</strong> Child inherits one parent.</li>
+                        <li><strong>Multiple:</strong> Child inherits multiple parents.</li>
+                        <li><strong>Multilevel:</strong> Child becomes a parent for another child.</li>
+                    </ul>
+
+                    <h3 class="text-xl font-bold text-white mt-6">super() & Class Methods</h3>
+                    <p><code>super()</code> accesses methods of the superclass. <code>@classmethod</code> binds to the class, not the object.</p>
+
+                    <h3 class="text-xl font-bold text-white mt-6">Properties & Operator Overloading</h3>
+                    <p><code>@property</code> makes a method act like an attribute. Dunder methods like <code>__add__</code> overload operators.</p>
+                `,
+                task: "Create a class 'Animal' with a method 'sound'. Create a subclass 'Dog' that inherits from Animal and overrides 'sound' to print 'Bark'.",
+                expectedOutput: "Bark",
+                starterCode: "class Animal:\n    def sound(self):\n        print('Some sound')\n\nclass Dog(Animal):\n    def sound(self):\n        # Override here\n        print('Bark')\n\nd = Dog()\nd.sound()"
+            },
+            {
+                id: "ch12",
+                title: "Ch 12: Advanced Python 1",
+                description: "Walrus operator, match-case, exceptions, and comprehensions.",
+                theory: `
+                    <h3 class="text-xl font-bold text-white mt-4">Exception Handling</h3>
+                    <p>Use <code>try</code> and <code>except</code> to catch errors.</p>
+                    <pre class="bg-slate-800 p-2 rounded mt-2"><code>try:
+    a = int("hello")
+except Exception as e:
+    print("An error occurred")</code></pre>
+
+                    <h3 class="text-xl font-bold text-white mt-6">Advanced Features</h3>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li><strong>Walrus Operator (:=):</strong> Assign and evaluate in one line.</li>
+                        <li><strong>Match Case:</strong> Python's version of a switch statement.</li>
+                        <li><strong>List Comprehensions:</strong> Elegant way to create lists. <code>[i for i in range(5) if i % 2 == 0]</code>.</li>
+                        <li><strong>Enumerate:</strong> Loop with an index. <code>for i, item in enumerate(list1):</code>.</li>
+                    </ul>
+                `,
+                task: "Use a try-except block to catch a ZeroDivisionError. Write `print(10 / 0)` inside try, and print 'Error caught' inside except.",
+                expectedOutput: "Error caught",
+                starterCode: "try:\n    # Write division by zero here\n    print(10 / 0)\nexcept ZeroDivisionError:\n    print('Error caught')"
+            },
+            {
+                id: "ch13",
+                title: "Ch 13: Advanced Python 2",
+                description: "Lambda, Map, Filter, Reduce, and formatting.",
+                theory: `
+                    <h3 class="text-xl font-bold text-white mt-4">Lambda Functions</h3>
+                    <p>Anonymous functions created in one line. <code>square = lambda x: x*x</code>.</p>
+                    
+                    <h3 class="text-xl font-bold text-white mt-6">Map, Filter, Reduce</h3>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li><strong>Map:</strong> Applies a function to all items. <code>list(map(lambda x: x*2, [1,2]))</code></li>
+                        <li><strong>Filter:</strong> Creates a list of items that return True. <code>list(filter(lambda x: x>2, [1,2,3]))</code></li>
+                        <li><strong>Reduce:</strong> Applies a rolling computation. <code>from functools import reduce</code>.</li>
+                    </ul>
+
+                    <h3 class="text-xl font-bold text-white mt-6">String Formatting</h3>
+                    <p><code>join()</code> and <code>format()</code> methods. E.g., <code>"{} is a good {}".format("harry", "boy")</code>.</p>
+                `,
+                task: "Use a lambda function combined with map() to double every number in the list [1, 2, 3]. Convert the result to a list and print it.",
+                expectedOutput: "[2, 4, 6]",
+                starterCode: "nums = [1, 2, 3]\n# Use map and lambda\nresult = list(map(lambda x: x * 2, nums))\nprint(result)"
+            },
+            {
+                id: "proj1",
+                title: "Project 1: Snake, Water, Gun",
+                description: "Build a mini game using conditionals and random module.",
+                theory: `
+                    <h3 class="text-xl font-bold text-white mt-4">Snake, Water, Gun</h3>
+                    <p>Rules: Snake drinks Water (Snake wins). Water drowns Gun (Water wins). Gun kills Snake (Gun wins).</p>
+                    <p>Use the <code>random.choice()</code> module to let the computer make a choice.</p>
+                `,
+                task: "Simulate a game where computer picks 'Snake' and you pick 'Water'. Print who wins.",
+                expectedOutput: "Computer Wins",
+                starterCode: "comp = 'Snake'\nyou = 'Water'\n# Determine winner and print 'Computer Wins'\nprint('Computer Wins')"
+            },
+            {
+                id: "proj2",
+                title: "Project 2: The Perfect Guess",
+                description: "Build a number guessing game.",
+                theory: `
+                    <h3 class="text-xl font-bold text-white mt-4">The Perfect Guess</h3>
+                    <p>Generate a random number. Ask the user to guess it. If they guess higher, print "Lower number please". If lower, print "Higher number please". Count the number of guesses.</p>
+                    <p>Since Skulpt doesn't easily support multiple inputs in this environment, we will simulate it.</p>
+                `,
+                task: "Assume the target number is 50. You guessed 40. Print 'Higher number please'.",
+                expectedOutput: "Higher number please",
+                starterCode: "target = 50\nguess = 40\n# Write your logic here\nprint('Higher number please')"
+            }
         ];
 
-        // --- 2. STATE & VARIABLES ---
+        // ============================================================================
+        // 2. STATE MANAGEMENT & INITIALIZATION
+        // ============================================================================
+
         let currentChapterIndex = 0;
         let editor;
-        let completedChapters = JSON.parse(localStorage.getItem('pythonProgress')) || [];
+        // Load progress from localStorage, default to empty array
+        let completedChapters = JSON.parse(localStorage.getItem('pythonUltimateProgress')) || [];
 
-        // --- 3. INITIALIZATION ---
         document.addEventListener("DOMContentLoaded", () => {
             initParticles();
             initEditor();
@@ -143,16 +591,27 @@
             setupSkulpt();
         });
 
+        // ============================================================================
+        // 3. GRAPHICS & UI INITIALIZATION
+        // ============================================================================
+
         function initParticles() {
             particlesJS("particles-js", {
                 "particles": {
-                    "number": { "value": 50 },
+                    "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
                     "color": { "value": "#38bdf8" },
                     "shape": { "type": "circle" },
-                    "opacity": { "value": 0.3 },
-                    "size": { "value": 3 },
-                    "move": { "speed": 2 }
-                }
+                    "opacity": { "value": 0.2, "random": false },
+                    "size": { "value": 3, "random": true },
+                    "line_linked": { "enable": true, "distance": 150, "color": "#38bdf8", "opacity": 0.2, "width": 1 },
+                    "move": { "enable": true, "speed": 1.5, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } },
+                    "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 0.5 } } }
+                },
+                "retina_detect": true
             });
         }
 
@@ -161,12 +620,15 @@
                 mode: "python",
                 theme: "dracula",
                 lineNumbers: true,
-                indentUnit: 4
+                indentUnit: 4,
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                extraKeys: {"Ctrl-Space": "autocomplete"}
             });
         }
 
-        // --- 4. SKULPT (PYTHON EXECUTION) SETUP ---
         function setupSkulpt() {
+            // Standard Skulpt initialization for Python 3
             function builtinRead(x) {
                 if (Skulpt.mods["python3"]["builtin"][x]) return Skulpt.mods["python3"]["builtin"][x];
                 if (Skulpt.mods["python3"]["stdlib"][x]) return Skulpt.mods["python3"]["stdlib"][x];
@@ -175,41 +637,28 @@
             Skulpt.configure({ read: builtinRead });
         }
 
-        function runPythonCode() {
-            const code = editor.getValue();
-            const outputDiv = document.getElementById("console");
-            outputDiv.innerHTML = ""; // Clear console
-            let outputText = "";
+        // ============================================================================
+        // 4. CORE LOGIC & RENDERING
+        // ============================================================================
 
-            function outf(text) {
-                outputText += text;
-                outputDiv.innerHTML += text.replace(/\n/g, "<br>");
-            }
-
-            function builtinRead(x) {
-                if (Skulpt.mods["python3"]["builtin"][x]) return Skulpt.mods["python3"]["builtin"][x];
-                if (Skulpt.mods["python3"]["stdlib"][x]) return Skulpt.mods["python3"]["stdlib"][x];
-                throw "File not found: '" + x + "'";
-            }
-
-            Skulpt.configure({ output: outf, read: builtinRead });
-            Skulpt.importMainWithBody("<stdin>", false, code);
-
-            return outputText;
-        }
-
-        // --- 5. UI RENDERING & LOGIC ---
         function renderSidebar() {
             const nav = document.getElementById("sidebar-nav");
             nav.innerHTML = "";
             
             curriculum.forEach((chapter, index) => {
                 const isCompleted = completedChapters.includes(chapter.id);
+                // Chapter 0 is always unlocked. Others unlock if previous is completed.
                 const isUnlocked = index === 0 || completedChapters.includes(curriculum[index - 1].id);
                 
                 const btn = document.createElement("button");
-                btn.className = `w-full text-left p-3 rounded-lg transition ${index === currentChapterIndex ? 'bg-cyan-900 border-l-4 border-cyan-400' : 'hover:bg-slate-700'} ${!isUnlocked ? 'locked' : ''}`;
-                btn.innerHTML = `${chapter.title} ${isCompleted ? '✅' : ''}`;
+                btn.className = `w-full text-left px-4 py-3 rounded-lg transition-all duration-200 flex justify-between items-center group ${
+                    index === currentChapterIndex ? 'active-chapter' : 'hover:bg-slate-800 text-slate-400'
+                } ${!isUnlocked ? 'locked' : ''}`;
+                
+                btn.innerHTML = `
+                    <span class="truncate pr-2">${chapter.title}</span>
+                    ${isCompleted ? '<span class="text-green-500">✓</span>' : (isUnlocked ? '<span class="text-slate-600 group-hover:text-slate-400">→</span>' : '<span class="text-slate-600">🔒</span>')}
+                `;
                 
                 if (isUnlocked) {
                     btn.onclick = () => loadChapter(index);
@@ -220,55 +669,157 @@
             // Update Progress Bar
             const percent = Math.round((completedChapters.length / curriculum.length) * 100);
             document.getElementById("progress-text").innerText = percent + "%";
+            document.getElementById("progress-bar").style.width = percent + "%";
         }
 
         function loadChapter(index) {
             currentChapterIndex = index;
             const chapter = curriculum[index];
             
+            // Update UI Text
             document.getElementById("lesson-title").innerText = chapter.title;
+            document.getElementById("lesson-description").innerText = chapter.description;
+            document.getElementById("chapter-badge").innerText = `CH ${index}`;
             document.getElementById("theory-content").innerHTML = chapter.theory;
             document.getElementById("task-description").innerText = chapter.task;
             
+            // Handle expected output display safely
+            const expectedStr = chapter.expectedOutput.replace(/\n/g, '\\n');
+            document.getElementById("expected-output-display").innerText = expectedStr;
+
+            // Setup Editor
             editor.setValue(chapter.starterCode);
-            document.getElementById("console").innerHTML = "Waiting for execution...";
+            
+            // Reset Console
+            clearConsole();
+            appendToConsole("> Environment loaded. Ready to run.");
             
             // Reset Submit Button
             const submitBtn = document.getElementById("submit-btn");
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Submit Task";
+            submitBtn.disabled = false;
+            if (completedChapters.includes(chapter.id)) {
+                submitBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Already Completed`;
+                submitBtn.classList.replace('bg-cyan-600', 'bg-green-700');
+                submitBtn.classList.replace('hover:bg-cyan-500', 'hover:bg-green-600');
+            } else {
+                submitBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Validate & Complete Chapter`;
+                submitBtn.classList.replace('bg-green-700', 'bg-cyan-600');
+                submitBtn.classList.replace('hover:bg-green-600', 'hover:bg-cyan-500');
+            }
+
+            // Add fade-in animation
+            const theoryPanel = document.getElementById('theory-panel');
+            theoryPanel.classList.remove('fade-in');
+            void theoryPanel.offsetWidth; // trigger reflow
+            theoryPanel.classList.add('fade-in');
 
             renderSidebar();
         }
 
-        // --- 6. EVENT LISTENERS ---
+        // ============================================================================
+        // 5. PYTHON EXECUTION (SKULPT)
+        // ============================================================================
+
+        function runPythonCode() {
+            const code = editor.getValue();
+            let outputText = "";
+            
+            clearConsole();
+            appendToConsole("> Executing main.py...\n");
+
+            function outf(text) {
+                outputText += text;
+                appendToConsole(text);
+            }
+
+            function builtinRead(x) {
+                if (Skulpt.mods["python3"]["builtin"][x]) return Skulpt.mods["python3"]["builtin"][x];
+                if (Skulpt.mods["python3"]["stdlib"][x]) return Skulpt.mods["python3"]["stdlib"][x];
+                throw "File not found: '" + x + "'";
+            }
+
+            Skulpt.configure({ output: outf, read: builtinRead });
+            
+            try {
+                // Run the python code
+                Skulpt.importMainWithBody("<stdin>", false, code);
+            } catch (e) {
+                appendToConsole(`\n[Error]: ${e.toString()}`);
+                outputText += `[Error]: ${e.toString()}`;
+            }
+
+            return outputText;
+        }
+
+        function appendToConsole(text) {
+            const consoleDiv = document.getElementById("console");
+            consoleDiv.innerHTML += text.replace(/\n/g, "<br>");
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+
+        function clearConsole() {
+            document.getElementById("console").innerHTML = "";
+        }
+
+        // ============================================================================
+        // 6. EVENT LISTENERS
+        // ============================================================================
+
+        // Run Button
         document.getElementById("run-btn").addEventListener("click", () => {
             runPythonCode();
         });
 
+        // Clear Console Button
+        document.getElementById("clear-console").addEventListener("click", () => {
+            clearConsole();
+        });
+
+        // Submit Button (Validation)
         document.getElementById("submit-btn").addEventListener("click", () => {
-            const output = runPythonCode();
             const chapter = curriculum[currentChapterIndex];
+            const output = runPythonCode();
             
-            // Simple output validation (can be made more robust)
-            if (output.trim() === chapter.expectedOutput.trim()) {
-                alert("🎉 Correct! Task passed.");
+            // Clean the output by trimming spaces and standardizing newlines for comparison
+            const cleanOutput = output.trim().replace(/\r\n/g, '\n');
+            const expected = chapter.expectedOutput.trim().replace(/\r\n/g, '\n');
+
+            if (cleanOutput === expected) {
+                appendToConsole("\n\n✅ SUCCESS! Output matches expected result.");
+                
+                // Save progress
                 if (!completedChapters.includes(chapter.id)) {
                     completedChapters.push(chapter.id);
-                    localStorage.setItem('pythonProgress', JSON.stringify(completedChapters));
+                    localStorage.setItem('pythonUltimateProgress', JSON.stringify(completedChapters));
                 }
+                
                 renderSidebar();
                 
-                // Automatically unlock/load next chapter if it exists
+                // Unlock next chapter
                 if (currentChapterIndex + 1 < curriculum.length) {
-                    loadChapter(currentChapterIndex + 1);
+                    setTimeout(() => {
+                        alert("🎉 Correct! Chapter completed. Moving to next chapter.");
+                        loadChapter(currentChapterIndex + 1);
+                    }, 1000);
                 } else {
-                    alert("🏆 You have completed the handbook!");
+                    setTimeout(() => {
+                        alert("🏆 CONGRATULATIONS! You have completed the entire Ultimate Python Handbook!");
+                    }, 1000);
                 }
+
             } else {
-                alert("❌ Output doesn't match the expected result. Try again!");
-                console.log("Expected:", chapter.expectedOutput);
-                console.log("Got:", output);
+                appendToConsole("\n\n❌ ERROR: Output does not match the expected result. Try again!");
+                appendToConsole(`\nExpected: "${expected}"`);
+                appendToConsole(`\nGot:      "${cleanOutput}"`);
+            }
+        });
+
+        // Reset Progress Button
+        document.getElementById("reset-btn").addEventListener("click", () => {
+            if (confirm("Are you sure you want to reset all your progress? This cannot be undone.")) {
+                completedChapters = [];
+                localStorage.removeItem('pythonUltimateProgress');
+                loadChapter(0);
             }
         });
     </script>
